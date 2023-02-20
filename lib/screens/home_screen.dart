@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_note/screens/add_exercise_screen.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/set_card.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -29,8 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {},
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddExerciseScreen(), fullscreenDialog: true),
+              );
+            },
           )
         ],
         title: TextButton(

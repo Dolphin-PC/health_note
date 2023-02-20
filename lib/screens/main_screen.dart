@@ -10,10 +10,10 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  List<Widget> _screenList = [
-    HomeScreen(),
-    HomeScreen(),
-    HomeScreen(),
+  final List<Widget> _screenList = [
+    const HomeScreen(),
+    const HomeScreen(),
+    const HomeScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -25,39 +25,34 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Instagram'),
-      ),
-      // body에 넣어줄 아이템
       body: Center(
         child: _screenList.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              // 현재 아이콘이 선택된 아이콘일때와 선택된 아이콘이 아닌 경우 Icon을 다르게 하기 위함
               icon: _selectedIndex == 0
-                  ? Icon(
+                  ? const Icon(
                       Icons.home_filled,
                       color: Colors.black,
                     )
-                  : Icon(Icons.home_outlined, color: Colors.black),
+                  : const Icon(Icons.home_outlined, color: Colors.black),
               label: 'home'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 1
-                  ? Icon(
+                  ? const Icon(
                       Icons.stacked_bar_chart_outlined,
                       color: Colors.black,
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.stacked_bar_chart_rounded,
                       color: Colors.black,
                     ),
               label: 'search'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 2
-                  ? Icon(Icons.person, color: Colors.black)
-                  : Icon(
+                  ? const Icon(Icons.person, color: Colors.black)
+                  : const Icon(
                       Icons.person_outline,
                       color: Colors.black,
                     ),

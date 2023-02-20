@@ -1,0 +1,17 @@
+[
+  {
+    "groupName" : "가슴",
+    "exerciseList" : [
+      {
+        "exerciseName" : "벤치프레스",
+        "unit" : "kg",
+        "isCount" : false
+      },
+      {
+        "exerciseName" : "덤벨프레스",
+        "unit" : "kg",
+        "isCount" : false
+      }
+    ]
+  }
+]
