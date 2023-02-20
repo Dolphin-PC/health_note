@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_note/styles/text_styles.dart';
-import 'package:health_note/widget/my_checkbox.dart';
-import 'package:health_note/widget/set_card.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:health_note/screens/home_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -12,87 +9,66 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  DateTime _now = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
+  int _selectedIndex = 0;
+  List<Widget> _screenList = [
+    HomeScreen(),
+    HomeScreen(),
+    HomeScreen(),
+  ];
 
-  bool isShowCalendar = false;
-
-  void onTapTitle() {
-    setState(() => isShowCalendar = !isShowCalendar);
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {},
-          )
-        ],
-        title: TextButton(
-          onPressed: onTapTitle,
-          child: Text('2023년 2월 13일', style: TextStyles.headText),
-        ),
+        title: Text('Instagram'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          children: [
-            TableCalendar(
-              firstDay: DateTime.utc(2000, 1, 1),
-              lastDay: DateTime.utc(2099, 12, 31),
-              focusedDay: _focusedDay,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = selectedDay;
-                });
-              },
-              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-              calendarFormat: CalendarFormat.month,
-              headerVisible: false,
-            ),
-            const Divider(
-              height: 3,
-              color: Colors.grey,
-            ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('풀업 (등)', style: TextStyles.titleText),
-                      GestureDetector(
-                        child: Icon(Icons.pending),
-                        onTap: () {
-                          print('more');
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(
-                  height: 1,
-                ),
-                SetCard(
-                  setName: '1세트',
-                  setCount: '10회',
-                ),
-                SetCard(
-                  setName: '2세트',
-                  setCount: '10회',
-                )
-              ],
-            )
-          ],
-        ),
+      // body에 넣어줄 아이템
+      body: Center(
+        child: _screenList.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              // 현재 아이콘이 선택된 아이콘일때와 선택된 아이콘이 아닌 경우 Icon을 다르게 하기 위함
+              icon: _selectedIndex == 0
+                  ? Icon(
+                      Icons.home_filled,
+                      color: Colors.black,
+                    )
+                  : Icon(Icons.home_outlined, color: Colors.black),
+              label: 'home'),
+          BottomNavigationBarItem(
+              icon: _selectedIndex == 1
+                  ? Icon(
+                      Icons.stacked_bar_chart_outlined,
+                      color: Colors.black,
+                    )
+                  : Icon(
+                      Icons.stacked_bar_chart_rounded,
+                      color: Colors.black,
+                    ),
+              label: 'search'),
+          BottomNavigationBarItem(
+              icon: _selectedIndex == 2
+                  ? Icon(Icons.person, color: Colors.black)
+                  : Icon(
+                      Icons.person_outline,
+                      color: Colors.black,
+                    ),
+              label: 'profile')
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: _onItemTapped,
+        showSelectedLabels: false, //(1)
+        showUnselectedLabels: false, //(1)
+        type: BottomNavigationBarType.fixed, //(2)
       ),
     );
   }
