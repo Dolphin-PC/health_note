@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/models/group_exercise_model.dart';
 import 'package:health_note/styles/text_styles.dart';
-import 'package:health_note/widget/exercise_card.dart';
 
 class GroupExerciseCard extends StatefulWidget {
-  const GroupExerciseCard(
-      {Key? key, required this.isModifyMode, required this.groupExerciseModel})
-      : super(key: key);
+  const GroupExerciseCard({Key? key, required this.isModifyMode, required this.groupExerciseModel}) : super(key: key);
 
   final bool isModifyMode;
   final GroupExerciseModel groupExerciseModel;
@@ -57,12 +54,12 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
         Divider(
           height: 1,
         ),
-        Column(
-          children: widget.groupExerciseModel.exerciseList.map((exercise) {
-            return ExerciseCard(
-                exerciseModel: exercise, isModifyMode: widget.isModifyMode);
-          }).toList(),
-        )
+        // Column(
+        //   children: widget.groupExerciseModel.exerciseList.map((exercise) {
+        //     return ExerciseCard(
+        //         exerciseModel: exercise, isModifyMode: widget.isModifyMode);
+        //   }).toList(),
+        // )
       ],
     );
   }

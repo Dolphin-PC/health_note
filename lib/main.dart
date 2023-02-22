@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'providers/main_provider.dart';
 
-void main() {
+void main() async {
+  // await DataBase.initDb();
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => MainProvider())],
     child: const MyApp(),

@@ -1,17 +1,25 @@
-[
-  {
-    "groupName" : "가슴",
-    "exerciseList" : [
-      {
-        "exerciseName" : "벤치프레스",
-        "unit" : "kg",
-        "isCount" : false
-      },
-      {
-        "exerciseName" : "덤벨프레스",
-        "unit" : "kg",
-        "isCount" : false
-      }
-    ]
-  }
-]
+{
+  "groupExerciseList" :
+  [
+    {
+      "groupId" : 1,
+      "groupName" : "가슴"
+    },
+    {
+      "groupId" : 2,
+      "groupName" : "등"
+    }
+  ],
+  "exerciseList" : [
+    {
+      "exerciseName" : "벤치프레스",
+      "unit" : "kg",
+      "isCount" : false
+    },
+    {
+      "exerciseName" : "덤벨프레스",
+      "unit" : "kg",
+      "isCount" : false
+    }
+  ]
+}

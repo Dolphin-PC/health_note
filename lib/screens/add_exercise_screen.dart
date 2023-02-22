@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:health_note/db/db.dart';
 import 'package:health_note/models/group_exercise_model.dart';
 import 'package:health_note/styles/color_styles.dart';
-import 'package:health_note/styles/text_styles.dart';
-import 'package:health_note/widget/exercise_card.dart';
+import 'package:health_note/widget/dialogs.dart';
 import 'package:health_note/widget/group_exercise_card.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AddExerciseScreen extends StatefulWidget {
   const AddExerciseScreen({Key? key}) : super(key: key);
@@ -25,18 +23,20 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
     isModifyMode = false;
 
     fetchData();
+    // fetchPrefsData();
   }
 
-  Future<String> fetchData() async {
-    final data = await rootBundle.loadString('assets/data/exercise.json');
-    List<dynamic> jsonList = jsonDecode(data);
-    print(jsonList);
-    groupExerciseModelList = jsonList.map((json) {
-      return GroupExerciseModel.fromJson(json);
-    }).toList();
+  Future fetchData() async {
+    Database db = await DataBase().initDB();
+  }
 
-    setState(() {});
-    return "";
+  fetchPrefsData() async {
+    // var sharedData = await Util.getSharedData<List<String>>("groupExerciseList");
+    // print("sharedData : $sharedData");
+  }
+
+  saveGroup(String groupName) {
+    // Util.setSharedData<
   }
 
   @override
@@ -56,16 +56,18 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(
             children: groupExerciseModelList.map((groupExerciseModel) {
-          return GroupExerciseCard(
-              isModifyMode: isModifyMode,
-              groupExerciseModel: groupExerciseModel);
+          return GroupExerciseCard(isModifyMode: isModifyMode, groupExerciseModel: groupExerciseModel);
         }).toList()),
       ),
       floatingActionButton: Visibility(
         visible: isModifyMode,
         child: FloatingActionButton(
           backgroundColor: ColorStyles.primaryColor,
-          onPressed: () {},
+          onPressed: () {
+            Dialogs.addGroupDialog(context, (groupName) {
+              print("groupName : $groupName");
+            });
+          },
           child: Icon(Icons.add),
         ),
       ),
