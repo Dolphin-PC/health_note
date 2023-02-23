@@ -49,6 +49,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
             if (!snap.hasData) return const Text('...');
 
             return ListView.builder(
+              shrinkWrap: true,
               itemCount: snap.data.length,
               itemBuilder: (ctx, idx) {
                 return GroupExerciseCard(groupExerciseModel: snap.data[idx], isModifyMode: isModifyMode);

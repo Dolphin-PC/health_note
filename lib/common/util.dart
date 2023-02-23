@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Util {
@@ -52,4 +53,10 @@ class Util {
         break;
     }
   }
+
+  static get now => DateTime.now();
+
+  static get getNowSimpleDateFormat => DateFormat('yyyy년 MM월 dd일').format(now);
+
+  static get getNowSimple => DateTime.utc(now.year, now.month, now.day);
 }
