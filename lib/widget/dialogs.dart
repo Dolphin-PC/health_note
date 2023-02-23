@@ -23,7 +23,10 @@ class Dialogs {
               ),
               TextButton(
                 child: const Text("추가"),
-                onPressed: () => addFn(myController.text),
+                onPressed: () {
+                  addFn(myController.text);
+                  Navigator.pop(context);
+                },
               ),
             ],
           );

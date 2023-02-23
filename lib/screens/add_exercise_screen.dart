@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_note/db/db.dart';
+import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/models/group_exercise_model.dart';
 import 'package:health_note/styles/color_styles.dart';
 import 'package:health_note/widget/dialogs.dart';
@@ -27,16 +27,15 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
   }
 
   Future fetchData() async {
-    Database db = await DataBase().initDB();
+    Database db = await DBHelper().database;
+    groupExerciseModelList = await GroupExerciseModel.selectList();
+    setState(() {});
   }
 
-  fetchPrefsData() async {
-    // var sharedData = await Util.getSharedData<List<String>>("groupExerciseList");
-    // print("sharedData : $sharedData");
-  }
-
-  saveGroup(String groupName) {
-    // Util.setSharedData<
+  addGroup(String groupName) {
+    GroupExerciseModel newGroup = GroupExerciseModel(groupName: groupName);
+    newGroup.insert();
+    fetchData();
   }
 
   @override
@@ -64,9 +63,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
         child: FloatingActionButton(
           backgroundColor: ColorStyles.primaryColor,
           onPressed: () {
-            Dialogs.addGroupDialog(context, (groupName) {
-              print("groupName : $groupName");
-            });
+            Dialogs.addGroupDialog(context, addGroup);
           },
           child: Icon(Icons.add),
         ),
