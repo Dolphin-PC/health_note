@@ -34,7 +34,7 @@ class DBHelper {
     // await db.execute('DROP TABLE if exists Test');
     // await db.execute('DROP TABLE if exists Test2');
     // await db.execute('DROP TABLE if exists group_exercise');
-    await db.execute('DROP TABLE if exists exercise');
+    // await db.execute('DROP TABLE if exists exercise');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (

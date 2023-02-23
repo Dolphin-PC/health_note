@@ -6,6 +6,7 @@ import 'package:health_note/providers/exercise_provider.dart';
 import 'package:health_note/providers/group_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/dialogs.dart';
+import 'package:health_note/widget/exercise_card.dart';
 import 'package:provider/provider.dart';
 
 class GroupExerciseCard extends StatefulWidget {
@@ -23,9 +24,6 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
   late ExerciseProvider exerciseProvider;
 
   addExercise(String inputText, String unitSelectValue, bool isCount) async {
-    print(inputText);
-    print(unitSelectValue);
-    print(isCount);
     exerciseProvider.insertOne(
         exerciseModel: ExerciseModel(
       exerciseName: inputText,
@@ -38,7 +36,7 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
   @override
   Widget build(BuildContext context) {
     groupExerciseProvider = Provider.of(context, listen: false);
-    exerciseProvider = Provider.of(context, listen: false);
+    exerciseProvider = Provider.of(context, listen: true);
 
     return Column(
       children: [
@@ -55,6 +53,7 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
                 visible: widget.isModifyMode,
                 child: Row(
                   children: [
+                    // 추가버튼
                     GestureDetector(
                       onTap: () {
                         Dialogs.addExerciseDialog(
@@ -67,6 +66,7 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
                     const SizedBox(
                       width: 10,
                     ),
+                    // 수정버튼
                     GestureDetector(
                       onTap: () {
                         Dialogs.inputDialog(
@@ -86,8 +86,12 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
                     const SizedBox(
                       width: 10,
                     ),
+                    // 삭제버튼
                     GestureDetector(
-                      onTap: () => groupExerciseProvider.deleteOne(groupExerciseModel: widget.groupExerciseModel),
+                      onTap: () {
+                        Dialogs.confirmDialog(
+                            context: context, contentText: "운동 그룹을 삭제하시겠습니까?", succBtnName: "삭제", succFn: () => groupExerciseProvider.deleteOne(groupExerciseModel: widget.groupExerciseModel));
+                      },
                       child: const Text('삭제'),
                     ),
                   ],
@@ -99,12 +103,21 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
         const Divider(
           height: 1,
         ),
-        // Column(
-        //   children: widget.groupExerciseModel.exerciseList.map((exercise) {
-        //     return ExerciseCard(
-        //         exerciseModel: exercise, isModifyMode: widget.isModifyMode);
-        //   }).toList(),
-        // )
+        FutureBuilder(
+          future: exerciseProvider.selectList(widget.groupExerciseModel.id!),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) return const Text('');
+
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data.length,
+              itemBuilder: (ctx, idx) {
+                return ExerciseCard(exerciseModel: snapshot.data[idx], isModifyMode: widget.isModifyMode);
+                // return Text('11');
+              },
+            );
+          },
+        ),
       ],
     );
   }

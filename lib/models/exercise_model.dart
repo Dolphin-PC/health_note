@@ -32,15 +32,17 @@ class ExerciseModel {
     final db = await DBHelper().database;
     final List<Map<String, dynamic>> maps = await db.query(TableNames.exercise, where: 'group_id = ?', whereArgs: [groupId]);
 
-    return List.generate(maps.length, (i) {
+    var list = List.generate(maps.length, (i) {
       return ExerciseModel(
         id: maps[i]['id'],
         exerciseName: maps[i]['exercise_name'],
-        unit: UNIT.fromDB(maps[i]['unit']),
-        isCount: maps[i]['is_count'],
+        unit: UNIT.fromString(maps[i]['unit']),
+        isCount: maps[i]['is_count'] == 1 ? true : false,
         groupId: maps[i]['group_id'],
       );
     });
+
+    return list;
   }
 
   Future<void> insert() async {

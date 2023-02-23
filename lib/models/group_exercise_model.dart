@@ -20,12 +20,16 @@ class GroupExerciseModel {
     final db = await DBHelper().database;
     final List<Map<String, dynamic>> maps = await db.query(TableNames.groupExercise);
 
-    return List.generate(maps.length, (i) {
+    var list = List.generate(maps.length, (i) {
       return GroupExerciseModel(
         id: maps[i]['id'],
         groupName: maps[i]['group_name'],
       );
     });
+
+    print(list);
+
+    return list;
   }
 
   Future<void> insert() async {

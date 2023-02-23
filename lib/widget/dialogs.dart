@@ -22,11 +22,13 @@ class Dialogs {
         builder: (BuildContext build) {
           return AlertDialog(
             title: Text(titleText),
-            content: TextField(
-              controller: myController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: inputLabel,
+            content: SingleChildScrollView(
+              child: TextField(
+                controller: myController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: inputLabel,
+                ),
               ),
             ),
             actions: [
@@ -63,20 +65,22 @@ class Dialogs {
         builder: (BuildContext build) {
           return AlertDialog(
             title: const Text("운동 추가"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text("운동이름", style: TextStyles.labelText),
-                TextField(controller: myController),
-                const SizedBox(height: 30),
-                Text("운동단위", style: TextStyles.labelText),
-                MyDropdownButton(dropdownList: unitList, callBackFn: (select) => unitSelectValue = select),
-                const SizedBox(height: 30),
-                Text("횟수여부", style: TextStyles.labelText),
-                MySingleToggleButton(callbackFn: (select) => isCountValue = select)
-              ],
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text("운동이름", style: TextStyles.labelText),
+                  TextField(controller: myController),
+                  const SizedBox(height: 30),
+                  Text("운동단위", style: TextStyles.labelText),
+                  MyDropdownButton(dropdownList: unitList, callBackFn: (select) => unitSelectValue = select),
+                  const SizedBox(height: 30),
+                  Text("횟수여부", style: TextStyles.labelText),
+                  MySingleToggleButton(callbackFn: (select) => isCountValue = select)
+                ],
+              ),
             ),
             actions: [
               TextButton(
@@ -87,6 +91,35 @@ class Dialogs {
                 child: const Text("추가"),
                 onPressed: () {
                   addFn(myController.text, unitSelectValue, isCountValue);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  static confirmDialog({
+    required BuildContext context,
+    required String contentText,
+    required String succBtnName,
+    String cancelBtnName = "취소",
+    required Function succFn,
+  }) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext build) {
+          return AlertDialog(
+            content: Text(contentText),
+            actions: [
+              TextButton(
+                child: Text(cancelBtnName),
+                onPressed: () => Navigator.pop(context),
+              ),
+              TextButton(
+                child: Text(succBtnName),
+                onPressed: () {
+                  succFn();
                   Navigator.pop(context);
                 },
               ),
