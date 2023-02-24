@@ -33,14 +33,15 @@ class DBHelper {
   static Future devInitDB(Database db) async {
     // await db.execute('DROP TABLE if exists Test');
     // await db.execute('DROP TABLE if exists Test2');
-    // await db.execute('DROP TABLE if exists group_exercise');
-    // await db.execute('DROP TABLE if exists exercise');
-    // await db.execute('DROP TABLE if exists event');
+    await db.execute('DROP TABLE if exists group_exercise');
+    await db.execute('DROP TABLE if exists exercise');
+    await db.execute('DROP TABLE if exists event');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_name TEXT 
+        group_name TEXT,
+        is_delete  BOOLEAN NOT NULL 
       )
     ''';
     String sql2 = '''

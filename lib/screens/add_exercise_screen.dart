@@ -48,11 +48,14 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
           builder: (BuildContext ctx, AsyncSnapshot snap) {
             if (!snap.hasData) return const Text('...');
 
+            List<GroupExerciseModel> orgList = snap.data;
+            List<GroupExerciseModel> filteredList = orgList.where((element) => !element.isDelete).toList();
+
             return ListView.builder(
               shrinkWrap: true,
-              itemCount: snap.data.length,
+              itemCount: filteredList.length,
               itemBuilder: (ctx, idx) {
-                return GroupExerciseCard(groupExerciseModel: snap.data[idx], isModifyMode: isModifyMode);
+                return GroupExerciseCard(groupExerciseModel: filteredList[idx], isModifyMode: isModifyMode);
               },
             );
           },

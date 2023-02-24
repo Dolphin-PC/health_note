@@ -2,8 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:health_note/models/group_exercise_model.dart';
 
 class GroupExerciseProvider extends ChangeNotifier {
+  List<GroupExerciseModel> _groupExerciseList = [];
+
+  get groupExerciseList => _groupExerciseList;
+  set groupExerciseList(list) => _groupExerciseList = list;
+
   Future<List<GroupExerciseModel>> selectList() async {
-    return await GroupExerciseModel.selectList();
+    _groupExerciseList = await GroupExerciseModel.selectList();
+    return _groupExerciseList;
   }
 
   Future insertOne({required GroupExerciseModel groupExerciseModel}) async {

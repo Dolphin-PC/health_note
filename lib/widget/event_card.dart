@@ -1,7 +1,13 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:health_note/models/event_model.dart';
+import 'package:health_note/models/group_exercise_model.dart';
+import 'package:health_note/providers/event_provider.dart';
+import 'package:health_note/providers/group_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
+import 'package:health_note/widget/dialogs.dart';
 import 'package:health_note/widget/set_card.dart';
+import 'package:provider/provider.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({Key? key, required this.eventModel}) : super(key: key);
@@ -15,6 +21,17 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   @override
   Widget build(BuildContext context) {
+    EventProvider eventProvider = Provider.of(context, listen: true);
+    GroupExerciseProvider groupExerciseProvider = Provider.of(context, listen: true);
+
+    Text titleText() {
+      List<GroupExerciseModel> list = groupExerciseProvider.groupExerciseList;
+      GroupExerciseModel? groupExerciseModel = list.firstWhereOrNull((element) => element.id == widget.eventModel.groupId);
+      String groupName = groupExerciseModel != null ? groupExerciseModel.groupName : "";
+
+      return Text("${widget.eventModel.exerciseName} ($groupName)", style: TextStyles.titleText);
+    }
+
     return Column(
       children: [
         Padding(
@@ -22,11 +39,17 @@ class _EventCardState extends State<EventCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.eventModel.exerciseName, style: TextStyles.titleText),
+              titleText(),
               GestureDetector(
                 child: Icon(Icons.pending),
                 onTap: () {
-                  print('more');
+                  Dialogs.confirmDialog(
+                      context: context,
+                      contentText: "기록을 삭제하시겠습니까?",
+                      succBtnName: "삭제",
+                      succFn: () {
+                        eventProvider.deleteOne(eventModel: widget.eventModel);
+                      });
                 },
               ),
             ],
