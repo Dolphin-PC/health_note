@@ -33,9 +33,9 @@ class DBHelper {
   static Future devInitDB(Database db) async {
     // await db.execute('DROP TABLE if exists Test');
     // await db.execute('DROP TABLE if exists Test2');
-    await db.execute('DROP TABLE if exists group_exercise');
-    await db.execute('DROP TABLE if exists exercise');
-    await db.execute('DROP TABLE if exists event');
+    // await db.execute('DROP TABLE if exists group_exercise');
+    // await db.execute('DROP TABLE if exists exercise');
+    // await db.execute('DROP TABLE if exists event');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
@@ -51,6 +51,7 @@ class DBHelper {
         unit          TEXT,
         is_count      BOOLEAN,
         group_id      INTEGER,
+        is_delete  BOOLEAN NOT NULL,
         FOREIGN KEY(group_id) REFERENCES group_exercise(id)
       )
     ''';
@@ -64,6 +65,7 @@ class DBHelper {
         exercise_name TEXT,
         unit          TEXT,
         is_count      BOOLEAN,
+        is_delete     BOOLEAN NOT NULL,
         FOREIGN KEY(exercise_id) REFERENCES group_exercise(id) 
         FOREIGN KEY(group_id)    REFERENCES group_exercise(id) 
       )

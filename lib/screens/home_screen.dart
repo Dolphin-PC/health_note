@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             FutureBuilder(
-              future: eventProvider.getEventsPerDay(_selectedDay),
+              future: eventProvider.getEventsPerDay(day: _selectedDay, isDelete: false),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) return Text('...');
 

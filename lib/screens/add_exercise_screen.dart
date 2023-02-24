@@ -44,18 +44,15 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: FutureBuilder(
-          future: groupExerciseProvider.selectList(),
+          future: groupExerciseProvider.selectList(isDelete: false),
           builder: (BuildContext ctx, AsyncSnapshot snap) {
             if (!snap.hasData) return const Text('...');
 
-            List<GroupExerciseModel> orgList = snap.data;
-            List<GroupExerciseModel> filteredList = orgList.where((element) => !element.isDelete).toList();
-
             return ListView.builder(
               shrinkWrap: true,
-              itemCount: filteredList.length,
+              itemCount: snap.data.length,
               itemBuilder: (ctx, idx) {
-                return GroupExerciseCard(groupExerciseModel: filteredList[idx], isModifyMode: isModifyMode);
+                return GroupExerciseCard(groupExerciseModel: snap.data[idx], isModifyMode: isModifyMode);
               },
             );
           },

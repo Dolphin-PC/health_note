@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:health_note/models/exercise_model.dart';
 
 class ExerciseProvider extends ChangeNotifier {
-  Future<List<ExerciseModel>> selectList(int groupId) async {
-    return await ExerciseModel.selectList(groupId: groupId);
+  Future<List<ExerciseModel>> selectList(int groupId, bool isDelete) async {
+    return await ExerciseModel.selectList(groupId: groupId, isDelete: isDelete);
   }
 
   Future insertOne({required ExerciseModel exerciseModel}) async {

@@ -18,17 +18,20 @@ class GroupExerciseModel {
     };
   }
 
-  static Future<List<GroupExerciseModel>> selectList() async {
+  static Future<List<GroupExerciseModel>> selectList({bool isDelete = true}) async {
     final db = await DBHelper().database;
     final List<Map<String, dynamic>> maps = await db.query(TableNames.groupExercise);
 
-    var list = List.generate(maps.length, (i) {
+    List<GroupExerciseModel> list = List.generate(maps.length, (i) {
       return GroupExerciseModel(
         id: maps[i]['id'],
         groupName: maps[i]['group_name'],
         isDelete: maps[i]['is_delete'] == 1 ? true : false,
       );
     });
+    if (isDelete == false) {
+      list = list.where((element) => element.isDelete == isDelete).toList();
+    }
 
     return list;
   }
@@ -51,7 +54,7 @@ class GroupExerciseModel {
   }
 
   Future<void> delete() async {
-    update({'is_delete': true});
+    await update({'is_delete': true});
   }
 
   Future<void> update(Map<String, dynamic> prmMap) async {

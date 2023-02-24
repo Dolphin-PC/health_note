@@ -7,13 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class EventModel extends ExerciseModel {
-  EventModel({
-    Key? key,
-    this.eventId,
-    required this.day,
-    required this.isComplete,
-    required this.exerciseModel,
-  }) : super(
+  EventModel({Key? key, this.eventId, required this.day, required this.isComplete, required this.exerciseModel, this.isDelete = false})
+      : super(
           id: exerciseModel.id,
           groupId: exerciseModel.groupId,
           exerciseName: exerciseModel.exerciseName,
@@ -23,7 +18,7 @@ class EventModel extends ExerciseModel {
 
   final int? eventId;
   final DateTime day;
-  bool isComplete;
+  bool isComplete, isDelete;
   final ExerciseModel exerciseModel;
 
   Map<String, dynamic> toMap() {
@@ -36,10 +31,11 @@ class EventModel extends ExerciseModel {
       'exercise_name': exerciseModel.exerciseName,
       'unit': exerciseModel.unit.toString(),
       'is_count': exerciseModel.isCount,
+      'is_delete': isDelete,
     };
   }
 
-  static Future<List<EventModel>> selectList(List whereArgs) async {
+  static Future<List<EventModel>> selectList({required List whereArgs, bool isDelete = true}) async {
     final db = await DBHelper().database;
     final List<Map<String, dynamic>> maps = await db.query(TableNames.event, where: 'day = ?', whereArgs: whereArgs);
 
@@ -48,6 +44,7 @@ class EventModel extends ExerciseModel {
           eventId: maps[i]['event_id'],
           day: DateTime.parse(maps[i]['day']),
           isComplete: maps[i]['is_complete'] == 1 ? true : false,
+          isDelete: maps[i]['is_delete'] == 1 ? true : false,
           exerciseModel: ExerciseModel(
               id: maps[i]['exercise_id'],
               exerciseName: maps[i]['exercise_name'],
@@ -55,6 +52,9 @@ class EventModel extends ExerciseModel {
               isCount: maps[i]['is_count'] == 1 ? true : false,
               groupId: maps[i]['group_id']));
     });
+    if (isDelete == false) {
+      list = list.where((element) => element.isDelete == isDelete).toList();
+    }
 
     return list;
   }
@@ -73,8 +73,7 @@ class EventModel extends ExerciseModel {
   }
 
   Future<void> delete() async {
-    final db = await DBHelper().database;
-    await db.delete(TableNames.event, where: 'event_id = ?', whereArgs: [eventId]);
+    await update({'is_delete': true});
   }
 
   Future<void> update(Map<String, dynamic> prmMap) async {

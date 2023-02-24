@@ -7,8 +7,8 @@ class GroupExerciseProvider extends ChangeNotifier {
   get groupExerciseList => _groupExerciseList;
   set groupExerciseList(list) => _groupExerciseList = list;
 
-  Future<List<GroupExerciseModel>> selectList() async {
-    _groupExerciseList = await GroupExerciseModel.selectList();
+  Future<List<GroupExerciseModel>> selectList({bool isDelete = true}) async {
+    _groupExerciseList = await GroupExerciseModel.selectList(isDelete: isDelete);
     return _groupExerciseList;
   }
 

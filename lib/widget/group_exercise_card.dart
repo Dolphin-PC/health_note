@@ -104,7 +104,7 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
           height: 1,
         ),
         FutureBuilder(
-          future: exerciseProvider.selectList(widget.groupExerciseModel.id!),
+          future: exerciseProvider.selectList(widget.groupExerciseModel.id!, false),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) return const Text('');
 
