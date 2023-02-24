@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
 import 'package:health_note/models/event_model.dart';
+import 'package:health_note/models/workout_set_model.dart';
 import 'package:health_note/providers/event_provider.dart';
+import 'package:health_note/providers/workout_set_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/dialogs.dart';
-import 'package:health_note/widget/set_card.dart';
+import 'package:health_note/widget/workout_set_card.dart';
 import 'package:provider/provider.dart';
 
 class EventCard extends StatefulWidget {
@@ -18,6 +20,7 @@ class EventCard extends StatefulWidget {
 
 class _EventCardState extends State<EventCard> {
   late EventProvider eventProvider;
+  late WorkoutSetProvider workoutSetProvider;
 
   @override
   void initState() {
@@ -35,6 +38,7 @@ class _EventCardState extends State<EventCard> {
   @override
   Widget build(BuildContext context) {
     eventProvider = Provider.of(context, listen: false);
+    workoutSetProvider = Provider.of(context, listen: true);
 
     return Column(
       children: [
@@ -68,13 +72,21 @@ class _EventCardState extends State<EventCard> {
         const Divider(
           height: 1,
         ),
-        SetCard(
-          setName: '1세트',
-          setCount: '10회',
-        ),
-        SetCard(
-          setName: '2세트',
-          setCount: '10회',
+        FutureBuilder(
+          future: workoutSetProvider.selectList(whereArgs: [widget.eventModel.eventId]),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) return Text('');
+
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, int index) {
+                return WorkoutSetCard(
+                  workoutSetModel: snapshot.data[index],
+                );
+              },
+            );
+          },
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,7 +107,12 @@ class _EventCardState extends State<EventCard> {
             Flexible(
               fit: FlexFit.tight,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  workoutSetProvider.insertOne(
+                      workoutSetModel: WorkoutSetModel(
+                    eventId: widget.eventModel.eventId,
+                  ));
+                },
                 child: Text(
                   '세트추가',
                   style: TextStyles.buttonText,
