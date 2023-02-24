@@ -33,45 +33,58 @@ class DBHelper {
   static Future devInitDB(Database db) async {
     // await db.execute('DROP TABLE if exists Test');
     // await db.execute('DROP TABLE if exists Test2');
-    // await db.execute('DROP TABLE if exists group_exercise');
-    // await db.execute('DROP TABLE if exists exercise');
-    // await db.execute('DROP TABLE if exists event');
+    await db.execute('DROP TABLE if exists group_exercise');
+    await db.execute('DROP TABLE if exists exercise');
+    await db.execute('DROP TABLE if exists event');
+    await db.execute('DROP TABLE if exists workout_set');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
         id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_name TEXT,
+        group_name TEXT    NOT NULL,
         is_delete  BOOLEAN NOT NULL 
-      )
+      );
     ''';
     String sql2 = '''
       CREATE TABLE if not exists exercise (
         id            INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_id      INTEGER,
         exercise_name TEXT,
         unit          TEXT,
-        is_count      BOOLEAN,
-        group_id      INTEGER,
-        is_delete  BOOLEAN NOT NULL,
+        is_count      BOOLEAN NOT NULL,
+        is_delete     BOOLEAN NOT NULL,
+        
         FOREIGN KEY(group_id) REFERENCES group_exercise(id)
-      )
+      );
     ''';
     String sql3 = '''
       CREATE TABLE if not exists event (
         event_id      INTEGER PRIMARY KEY AUTOINCREMENT,
-        day           TIMESTAMP,
-        is_complete   BOOLEAN,
         exercise_id   INTEGER,
-        group_id      INTEGER,
-        exercise_name TEXT,
-        unit          TEXT,
-        is_count      BOOLEAN,
-        is_delete     BOOLEAN NOT NULL,
-        FOREIGN KEY(exercise_id) REFERENCES group_exercise(id) 
-        FOREIGN KEY(group_id)    REFERENCES group_exercise(id) 
+        day           TIMESTAMP,
+        is_complete   BOOLEAN    NOT NULL,
+        is_delete     BOOLEAN    NOT NULL,
+        
+        FOREIGN KEY(exercise_id) REFERENCES exercise(id)
+      );
+    ''';
+
+    String sql4 = '''
+      CREATE TABLE if not exists workout_set (
+          workout_set_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+          event_id          INTEGER,
+          set_idx           INTEGER,
+          is_complete       BOOLEAN NOT NULL,
+          is_delete         BOOLEAN NOT NULL,
+          
+          FOREIGN KEY(event_id) REFERENCES event(event_id),
+          FOREIGN KEY(event_id) REFERENCES event(event_id)
       )
     ''';
+
     await db.execute(sql1);
     await db.execute(sql2);
     await db.execute(sql3);
+    await db.execute(sql4);
   }
 }

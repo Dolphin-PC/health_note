@@ -7,8 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class EventModel extends ExerciseModel {
-  EventModel({Key? key, this.eventId, required this.day, required this.isComplete, required this.exerciseModel, this.isDelete = false})
-      : super(
+  EventModel({
+    Key? key,
+    this.eventId,
+    required this.day,
+    required this.isComplete,
+    this.isDelete = false,
+    required this.exerciseModel,
+  }) : super(
           id: exerciseModel.id,
           groupId: exerciseModel.groupId,
           exerciseName: exerciseModel.exerciseName,

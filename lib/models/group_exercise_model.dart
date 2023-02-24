@@ -3,7 +3,11 @@ import 'package:health_note/db/table_names.dart';
 import 'package:sqflite/sqflite.dart';
 
 class GroupExerciseModel {
-  GroupExerciseModel({this.id, required this.groupName, this.isDelete = false});
+  GroupExerciseModel({
+    this.id,
+    required this.groupName,
+    this.isDelete = false,
+  });
 
   final int? id;
   String groupName;

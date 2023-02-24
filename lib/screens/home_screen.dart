@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Visibility(
               visible: isShowCalendar,
-              child: Divider(
+              child: const Divider(
                 height: 3,
                 color: Colors.grey,
               ),
@@ -81,24 +81,19 @@ class _HomeScreenState extends State<HomeScreen> {
             FutureBuilder(
               future: eventProvider.getEventsPerDay(day: _selectedDay, isDelete: false),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) return Text('...');
+                if (!snapshot.hasData) return const Text('...');
 
                 return Expanded(
                   child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, idx) {
-                        return EventCard(eventModel: snapshot.data[idx]);
-                      }),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, idx) {
+                      return EventCard(eventModel: snapshot.data[idx]);
+                    },
+                  ),
                 );
               },
             )
-            // Column(
-            //   children: [
-            //     EventCard(),
-            //     EventCard(),
-            //   ],
-            // )
           ],
         ),
       ),
