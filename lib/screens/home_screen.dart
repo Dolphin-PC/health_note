@@ -28,8 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     EventProvider eventProvider = Provider.of(context, listen: true);
 
-    print(eventProvider.getEventsForDay(Util.getNowSimple));
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -47,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         title: TextButton(
           onPressed: onTapTitle,
-          child: Text(Util.getNowSimpleDateFormat, style: TextStyles.headText),
+          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay), style: TextStyles.headText),
         ),
       ),
       body: Padding(
@@ -59,8 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: TableCalendar(
                 onDaySelected: (selectedDay, focusedDay) {
                   setState(() {
+                    eventProvider.selectedDay = selectedDay;
                     _selectedDay = selectedDay;
-                    _focusedDay = selectedDay;
+                    _focusedDay = focusedDay;
                   });
                 },
                 // eventLoader: eventProvider.getEventsForDay,
@@ -80,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             FutureBuilder(
-              future: eventProvider.getEventsForDay(_selectedDay),
+              future: eventProvider.getEventsPerDay(_selectedDay),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) return Text('...');
 

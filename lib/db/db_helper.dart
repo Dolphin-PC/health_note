@@ -35,22 +35,40 @@ class DBHelper {
     // await db.execute('DROP TABLE if exists Test2');
     // await db.execute('DROP TABLE if exists group_exercise');
     // await db.execute('DROP TABLE if exists exercise');
+    // await db.execute('DROP TABLE if exists event');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_name TEXT )
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        group_name TEXT 
+      )
     ''';
     String sql2 = '''
       CREATE TABLE if not exists exercise (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id            INTEGER PRIMARY KEY AUTOINCREMENT,
         exercise_name TEXT,
-        unit TEXT,
-        is_count boolean,
-        group_id INTEGER,
-        FOREIGN KEY(group_id) REFERENCES group_exercise(id) )
+        unit          TEXT,
+        is_count      BOOLEAN,
+        group_id      INTEGER,
+        FOREIGN KEY(group_id) REFERENCES group_exercise(id)
+      )
+    ''';
+    String sql3 = '''
+      CREATE TABLE if not exists event (
+        event_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+        day           TIMESTAMP,
+        is_complete   BOOLEAN,
+        exercise_id   INTEGER,
+        group_id      INTEGER,
+        exercise_name TEXT,
+        unit          TEXT,
+        is_count      BOOLEAN,
+        FOREIGN KEY(exercise_id) REFERENCES group_exercise(id) 
+        FOREIGN KEY(group_id)    REFERENCES group_exercise(id) 
+      )
     ''';
     await db.execute(sql1);
     await db.execute(sql2);
+    await db.execute(sql3);
   }
 }

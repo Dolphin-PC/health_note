@@ -113,7 +113,6 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
               itemCount: snapshot.data.length,
               itemBuilder: (ctx, idx) {
                 return ExerciseCard(exerciseModel: snapshot.data[idx], isModifyMode: widget.isModifyMode);
-                // return Text('11');
               },
             );
           },
