@@ -6,26 +6,26 @@ import 'package:sqflite/sqlite_api.dart';
 class ExerciseModel {
   ExerciseModel({
     this.id,
+    required this.groupId,
     required this.exerciseName,
     required this.unit,
     required this.isCount,
-    required this.groupId,
     this.isDelete = false,
   });
 
   final int? id;
+  final int groupId;
   String exerciseName;
   UNIT unit;
   bool isCount, isDelete;
-  final int groupId;
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'group_id': groupId,
       'exercise_name': exerciseName,
       'unit': unit.toString(),
       'is_count': isCount,
-      'group_id': groupId,
       'is_delete': isDelete,
     };
   }
@@ -37,10 +37,10 @@ class ExerciseModel {
     List<ExerciseModel> list = List.generate(maps.length, (i) {
       return ExerciseModel(
         id: maps[i]['id'],
+        groupId: maps[i]['group_id'],
         exerciseName: maps[i]['exercise_name'],
         unit: UNIT.fromString(maps[i]['unit']),
         isCount: maps[i]['is_count'] == 1 ? true : false,
-        groupId: maps[i]['group_id'],
         isDelete: maps[i]['is_delete'] == 1 ? true : false,
       );
     });

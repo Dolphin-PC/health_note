@@ -31,12 +31,10 @@ class DBHelper {
   }
 
   static Future devInitDB(Database db) async {
-    // await db.execute('DROP TABLE if exists Test');
-    // await db.execute('DROP TABLE if exists Test2');
-    await db.execute('DROP TABLE if exists group_exercise');
-    await db.execute('DROP TABLE if exists exercise');
-    await db.execute('DROP TABLE if exists event');
-    await db.execute('DROP TABLE if exists workout_set');
+    // await db.execute('DROP TABLE if exists group_exercise');
+    // await db.execute('DROP TABLE if exists exercise');
+    // await db.execute('DROP TABLE if exists event');
+    // await db.execute('DROP TABLE if exists workout_set');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
@@ -48,7 +46,7 @@ class DBHelper {
     String sql2 = '''
       CREATE TABLE if not exists exercise (
         id            INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_id      INTEGER,
+        group_id      INTEGER NOT NULL,
         exercise_name TEXT,
         unit          TEXT,
         is_count      BOOLEAN NOT NULL,
@@ -59,11 +57,11 @@ class DBHelper {
     ''';
     String sql3 = '''
       CREATE TABLE if not exists event (
-        event_id      INTEGER PRIMARY KEY AUTOINCREMENT,
-        exercise_id   INTEGER,
-        day           TIMESTAMP,
-        is_complete   BOOLEAN    NOT NULL,
-        is_delete     BOOLEAN    NOT NULL,
+        event_id      INTEGER     PRIMARY KEY AUTOINCREMENT,
+        exercise_id   INTEGER     NOT NULL,
+        day           TIMESTAMP           ,
+        is_complete   BOOLEAN     NOT NULL,
+        is_delete     BOOLEAN     NOT NULL,
         
         FOREIGN KEY(exercise_id) REFERENCES exercise(id)
       );
@@ -72,14 +70,13 @@ class DBHelper {
     String sql4 = '''
       CREATE TABLE if not exists workout_set (
           workout_set_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-          event_id          INTEGER,
-          set_idx           INTEGER,
+          event_id          INTEGER NOT NULL,
+          set_idx           INTEGER         ,
           is_complete       BOOLEAN NOT NULL,
           is_delete         BOOLEAN NOT NULL,
           
-          FOREIGN KEY(event_id) REFERENCES event(event_id),
           FOREIGN KEY(event_id) REFERENCES event(event_id)
-      )
+      );
     ''';
 
     await db.execute(sql1);

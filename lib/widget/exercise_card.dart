@@ -32,11 +32,12 @@ class ExerciseCard extends StatelessWidget {
                 // 읽기모드 일때 => 현재 날짜(events)에 운동 추가
                 // TODO 바로 추가 하지 말고, 쌓았다가 저장하기
                 eventProvider.insertOne(
-                    eventModel: EventModel(
-                  day: eventProvider.selectedDay,
-                  isComplete: false,
-                  exerciseModel: exerciseModel,
-                ));
+                  eventModel: EventModel(
+                    exerciseId: exerciseModel.id,
+                    day: eventProvider.selectedDay,
+                    isComplete: false,
+                  ),
+                );
               }
             },
             child: Row(

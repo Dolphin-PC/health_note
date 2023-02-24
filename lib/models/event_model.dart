@@ -1,42 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/db/table_names.dart';
-import 'package:health_note/enums/unit.dart';
-import 'package:health_note/models/exercise_model.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
-class EventModel extends ExerciseModel {
+class EventModel {
   EventModel({
     Key? key,
     this.eventId,
+    this.exerciseId,
     required this.day,
     required this.isComplete,
     this.isDelete = false,
-    required this.exerciseModel,
-  }) : super(
-          id: exerciseModel.id,
-          groupId: exerciseModel.groupId,
-          exerciseName: exerciseModel.exerciseName,
-          unit: exerciseModel.unit,
-          isCount: exerciseModel.isCount,
-        );
+  });
 
   final int? eventId;
+  final int? exerciseId;
   final DateTime day;
   bool isComplete, isDelete;
-  final ExerciseModel exerciseModel;
 
   Map<String, dynamic> toMap() {
     return {
       'event_id': eventId,
+      'exercise_id': exerciseId,
       'day': DateFormat("yyyy-MM-dd").format(day),
       'is_complete': isComplete,
-      'exercise_id': exerciseModel.id,
-      'group_id': exerciseModel.groupId,
-      'exercise_name': exerciseModel.exerciseName,
-      'unit': exerciseModel.unit.toString(),
-      'is_count': exerciseModel.isCount,
       'is_delete': isDelete,
     };
   }
@@ -47,17 +35,14 @@ class EventModel extends ExerciseModel {
 
     var list = List.generate(maps.length, (i) {
       return EventModel(
-          eventId: maps[i]['event_id'],
-          day: DateTime.parse(maps[i]['day']),
-          isComplete: maps[i]['is_complete'] == 1 ? true : false,
-          isDelete: maps[i]['is_delete'] == 1 ? true : false,
-          exerciseModel: ExerciseModel(
-              id: maps[i]['exercise_id'],
-              exerciseName: maps[i]['exercise_name'],
-              unit: UNIT.fromString(maps[i]['unit']),
-              isCount: maps[i]['is_count'] == 1 ? true : false,
-              groupId: maps[i]['group_id']));
+        eventId: maps[i]['event_id'],
+        exerciseId: maps[i]['exercise_id'],
+        day: DateTime.parse(maps[i]['day']),
+        isComplete: maps[i]['is_complete'] == 1 ? true : false,
+        isDelete: maps[i]['is_delete'] == 1 ? true : false,
+      );
     });
+
     if (isDelete == false) {
       list = list.where((element) => element.isDelete == isDelete).toList();
     }
@@ -85,5 +70,17 @@ class EventModel extends ExerciseModel {
   Future<void> update(Map<String, dynamic> prmMap) async {
     final db = await DBHelper().database;
     await db.update(TableNames.event, prmMap, where: 'event_id = ?', whereArgs: [eventId]);
+  }
+
+  Future selectEventById() async {
+    final db = await DBHelper().database;
+    final map = await db.rawQuery('''
+          select * from event    m 
+       left join exercise       d1 on m.exercise_id = d1.id
+       left join group_exercise d2 on d1.group_id   = d2.id
+           where m.event_id = $eventId
+      ''');
+    // print(map);
+    return map;
   }
 }

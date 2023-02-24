@@ -1,9 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:health_note/common/util.dart';
 import 'package:health_note/models/event_model.dart';
-import 'package:health_note/models/group_exercise_model.dart';
 import 'package:health_note/providers/event_provider.dart';
-import 'package:health_note/providers/group_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/dialogs.dart';
 import 'package:health_note/widget/set_card.dart';
@@ -19,18 +17,24 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
+  late EventProvider eventProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    Util.execAfterBinding(() async {});
+  }
+
+  Future<Text> titleText() async {
+    var selectEventById = await eventProvider.selectEventById(eventModel: widget.eventModel);
+    String exerciseName = selectEventById[0]['exercise_name'];
+    String groupName = selectEventById[0]['group_name'];
+    return Text("$exerciseName ($groupName)", style: TextStyles.titleText);
+  }
+
   @override
   Widget build(BuildContext context) {
-    EventProvider eventProvider = Provider.of(context, listen: true);
-    GroupExerciseProvider groupExerciseProvider = Provider.of(context, listen: true);
-
-    Text titleText() {
-      List<GroupExerciseModel> list = groupExerciseProvider.groupExerciseList;
-      GroupExerciseModel? groupExerciseModel = list.firstWhereOrNull((element) => element.id == widget.eventModel.groupId);
-      String groupName = groupExerciseModel != null ? groupExerciseModel.groupName : "";
-
-      return Text("${widget.eventModel.exerciseName} ($groupName)", style: TextStyles.titleText);
-    }
+    eventProvider = Provider.of(context, listen: false);
 
     return Column(
       children: [
@@ -39,7 +43,13 @@ class _EventCardState extends State<EventCard> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              titleText(),
+              FutureBuilder(
+                future: titleText(),
+                builder: (BuildContext builder, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) return Text('');
+                  return snapshot.data;
+                },
+              ),
               GestureDetector(
                 child: Icon(Icons.pending),
                 onTap: () {
