@@ -8,13 +8,16 @@ class WorkoutSetModel {
     Key? key,
     this.workoutSetId,
     required this.eventId,
+    this.unitCount,
+    this.count,
     this.setIdx,
     this.isComplete = false,
     this.isDelete = false,
   });
 
-  final int? workoutSetId;
+  int? workoutSetId;
   final int? eventId;
+  final int? unitCount, count;
   final int? setIdx;
   bool isComplete, isDelete;
 
@@ -22,6 +25,8 @@ class WorkoutSetModel {
     return {
       'workout_set_id': workoutSetId,
       'event_id': eventId,
+      'unit_count': unitCount,
+      'count': count,
       'set_idx': setIdx,
       'is_complete': isComplete,
       'is_delete': isDelete,
@@ -36,6 +41,8 @@ class WorkoutSetModel {
       return WorkoutSetModel(
         workoutSetId: maps[i]['workout_set_id'],
         eventId: maps[i]['event_id'],
+        unitCount: maps[i]['unit_count'],
+        count: maps[i]['count'],
         setIdx: maps[i]['set_idx'],
         isComplete: maps[i]['is_complete'] == 1 ? true : false,
         isDelete: maps[i]['is_delete'] == 1 ? true : false,

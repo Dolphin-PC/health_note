@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:health_note/common/util.dart';
 import 'package:health_note/models/event_model.dart';
 import 'package:health_note/models/workout_set_model.dart';
 import 'package:health_note/providers/event_provider.dart';
@@ -21,17 +20,18 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   late EventProvider eventProvider;
   late WorkoutSetProvider workoutSetProvider;
+  late var exerciseInfo;
 
   @override
   void initState() {
     super.initState();
-    Util.execAfterBinding(() async {});
   }
 
   Future<Text> titleText() async {
     var selectEventById = await eventProvider.selectEventById(eventModel: widget.eventModel);
-    String exerciseName = selectEventById[0]['exercise_name'];
-    String groupName = selectEventById[0]['group_name'];
+    exerciseInfo = selectEventById[0];
+    String exerciseName = exerciseInfo['exercise_name'];
+    String groupName = exerciseInfo['group_name'];
     return Text("$exerciseName ($groupName)", style: TextStyles.titleText);
   }
 
@@ -58,12 +58,13 @@ class _EventCardState extends State<EventCard> {
                 child: Icon(Icons.pending),
                 onTap: () {
                   Dialogs.confirmDialog(
-                      context: context,
-                      contentText: "기록을 삭제하시겠습니까?",
-                      succBtnName: "삭제",
-                      succFn: () {
-                        eventProvider.deleteOne(eventModel: widget.eventModel);
-                      });
+                    context: context,
+                    contentText: "기록을 삭제하시겠습니까?",
+                    succBtnName: "삭제",
+                    succFn: () {
+                      eventProvider.deleteOne(eventModel: widget.eventModel);
+                    },
+                  );
                 },
               ),
             ],
@@ -73,54 +74,69 @@ class _EventCardState extends State<EventCard> {
           height: 1,
         ),
         FutureBuilder(
-          future: workoutSetProvider.selectList(whereArgs: [widget.eventModel.eventId]),
+          future: workoutSetProvider.selectList(whereArgs: [widget.eventModel.eventId], isDelete: false),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) return Text('');
 
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, int index) {
-                return WorkoutSetCard(
-                  workoutSetModel: snapshot.data[index],
-                );
-              },
+            List<WorkoutSetModel> workoutList = snapshot.data;
+            return Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: workoutList.length,
+                  itemBuilder: (context, int index) {
+                    return WorkoutSetCard(
+                      workoutSetModel: workoutList[index],
+                      index: index + 1,
+                      exerciseInfo: exerciseInfo,
+                    );
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          if (workoutList.length > 0) {
+                            workoutSetProvider.deleteOne(workoutSetModel: workoutList.last);
+                          }
+                        },
+                        child: Text(
+                          '세트삭제',
+                          style: TextStyles.buttonText,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          if (workoutList.length > 0) {
+                            workoutList.last.workoutSetId = null;
+                            workoutSetProvider.insertOne(workoutSetModel: workoutList.last);
+                          } else {
+                            workoutSetProvider.insertOne(
+                              workoutSetModel: WorkoutSetModel(eventId: widget.eventModel.eventId, count: 0, unitCount: 0),
+                            );
+                          }
+                        },
+                        child: Text(
+                          '세트추가',
+                          style: TextStyles.buttonText,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             );
           },
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: OutlinedButton(
-                onPressed: () {},
-                child: Text(
-                  '세트삭제',
-                  style: TextStyles.buttonText,
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              fit: FlexFit.tight,
-              child: OutlinedButton(
-                onPressed: () {
-                  workoutSetProvider.insertOne(
-                      workoutSetModel: WorkoutSetModel(
-                    eventId: widget.eventModel.eventId,
-                  ));
-                },
-                child: Text(
-                  '세트추가',
-                  style: TextStyles.buttonText,
-                ),
-              ),
-            ),
-          ],
-        )
       ],
     );
   }

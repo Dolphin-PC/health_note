@@ -4,9 +4,11 @@ import 'package:health_note/providers/workout_set_provider.dart';
 import 'package:provider/provider.dart';
 
 class WorkoutSetCard extends StatefulWidget {
-  const WorkoutSetCard({Key? key, required this.workoutSetModel}) : super(key: key);
+  const WorkoutSetCard({Key? key, required this.workoutSetModel, required this.index, this.exerciseInfo}) : super(key: key);
 
   final WorkoutSetModel workoutSetModel;
+  final int index;
+  final exerciseInfo;
 
   @override
   State<WorkoutSetCard> createState() => _WorkoutSetCardState();
@@ -27,13 +29,28 @@ class _WorkoutSetCardState extends State<WorkoutSetCard> {
             Checkbox(
               value: widget.workoutSetModel.isComplete,
               onChanged: (bool) {
+                widget.workoutSetModel.isComplete = bool!;
+                workoutSetProvider.updateOne(workoutSetModel: widget.workoutSetModel, changeModel: widget.workoutSetModel);
                 // setState(() => isChecked = bool!);
               },
             ),
-            Text('set 1'),
+            Text('SET ${widget.index}'),
           ],
         ),
-        Text('10 회'),
+        Row(
+          children: [
+            Text('${widget.workoutSetModel.unitCount} ${widget.exerciseInfo['unit']}'),
+            Visibility(
+              visible: widget.exerciseInfo['is_count'] == 1,
+              child: Row(
+                children: [
+                  Text(' X '),
+                  Text('${widget.workoutSetModel.count} 회'),
+                ],
+              ),
+            )
+          ],
+        )
       ],
     );
   }

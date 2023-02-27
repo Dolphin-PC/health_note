@@ -72,6 +72,8 @@ class DBHelper {
           workout_set_id    INTEGER PRIMARY KEY AUTOINCREMENT,
           event_id          INTEGER NOT NULL,
           set_idx           INTEGER         ,
+          unit_count        INTEGER         ,
+          count             INTEGER         ,
           is_complete       BOOLEAN NOT NULL,
           is_delete         BOOLEAN NOT NULL,
           
