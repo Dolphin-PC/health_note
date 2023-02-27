@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Visibility(
               visible: isShowCalendar,
               child: FutureBuilder(
-                future: eventProvider.getEventsForDay(),
+                future: eventProvider.getEventList(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) return Text('loading');
 
