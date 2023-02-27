@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
+import 'package:health_note/models/event_model.dart';
 import 'package:health_note/providers/event_provider.dart';
 import 'package:health_note/screens/add_exercise_screen.dart';
 import 'package:health_note/styles/text_styles.dart';
@@ -59,21 +60,30 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Visibility(
               visible: isShowCalendar,
-              child: TableCalendar(
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    eventProvider.selectedDay = selectedDay;
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
+              child: FutureBuilder(
+                future: eventProvider.getEventsForDay(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) return Text('loading');
+
+                  final Map<DateTime, List<EventModel>> eventList = snapshot.data;
+                  return TableCalendar(
+                    eventLoader: (DateTime day) => eventProvider.getEventForDay(eventList, DateTime(day.year, day.month, day.day)),
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        eventProvider.selectedDay = selectedDay;
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    },
+                    // eventLoader: eventProvider.getEventsForDay,
+                    firstDay: DateTime(2000),
+                    lastDay: DateTime(2099),
+                    focusedDay: _focusedDay,
+                    selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+                    calendarFormat: CalendarFormat.month,
+                    headerVisible: false,
+                  );
                 },
-                // eventLoader: eventProvider.getEventsForDay,
-                firstDay: DateTime.utc(2000, 1, 1),
-                lastDay: DateTime.utc(2099, 12, 31),
-                focusedDay: _focusedDay,
-                selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-                calendarFormat: CalendarFormat.month,
-                headerVisible: false,
               ),
             ),
             Visibility(

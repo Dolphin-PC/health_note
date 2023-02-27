@@ -83,4 +83,17 @@ class EventModel {
     // print(map);
     return map;
   }
+
+  static Future<List<DateTime>> selectEventGroupByDay() async {
+    final db = await DBHelper().database;
+
+    // List<DateTime> resultList = [];
+    final dayList = await db.rawQuery('''
+          select day from event 
+          where is_delete = false
+        group by day;
+      ''');
+
+    return List.generate(dayList.length, (index) => DateTime.parse(dayList[index]['day'].toString()));
+  }
 }

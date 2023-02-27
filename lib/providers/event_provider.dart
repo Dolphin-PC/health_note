@@ -38,13 +38,20 @@ class EventProvider extends ChangeNotifier {
     return await selectList(whereArgs: whereArgs, isDelete: isDelete);
   }
 
-  Future<List<EventModel>> getEventsForDay({required DateTime day, bool isDelete = true}) async {
-    var map = await getEventsPerDay(day: _selectedDay, isDelete: isDelete);
-    print(map);
-    // var list = await selectList();
-    // print(list);
-    // print(day);
-    return [];
+  Future<Map<DateTime, List<EventModel>>> getEventsForDay() async {
+    List<DateTime> dayList = await EventModel.selectEventGroupByDay();
+
+    Map<DateTime, List<EventModel>> resultMap = {};
+
+    for (DateTime day in dayList) {
+      resultMap[day] = await getEventsPerDay(day: day, isDelete: false);
+    }
+
+    return resultMap;
+  }
+
+  List<EventModel> getEventForDay(Map<DateTime, List<EventModel>> dayList, DateTime day) {
+    return dayList[day] ?? [];
   }
 
   Future selectEventById({required EventModel eventModel}) async {
