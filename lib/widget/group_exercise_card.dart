@@ -110,6 +110,7 @@ class _GroupExerciseCardState extends State<GroupExerciseCard> {
 
             return ListView.builder(
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: snapshot.data.length,
               itemBuilder: (ctx, idx) {
                 return ExerciseCard(exerciseModel: snapshot.data[idx], isModifyMode: widget.isModifyMode);

@@ -17,7 +17,7 @@ class WorkoutSetModel {
 
   int? workoutSetId;
   final int? eventId;
-  final int? unitCount, count;
+  int? unitCount, count;
   final int? setIdx;
   bool isComplete, isDelete;
 

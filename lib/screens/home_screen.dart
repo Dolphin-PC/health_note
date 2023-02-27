@@ -25,6 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     EventProvider eventProvider = Provider.of(context, listen: true);
 
@@ -85,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 return Expanded(
                   child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 200),
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, idx) {

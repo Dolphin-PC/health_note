@@ -4,6 +4,7 @@ import 'package:health_note/models/workout_set_model.dart';
 import 'package:health_note/providers/event_provider.dart';
 import 'package:health_note/providers/workout_set_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
+import 'package:health_note/widget/bottom_sheets.dart';
 import 'package:health_note/widget/dialogs.dart';
 import 'package:health_note/widget/workout_set_card.dart';
 import 'package:provider/provider.dart';
@@ -82,13 +83,20 @@ class _EventCardState extends State<EventCard> {
             return Column(
               children: [
                 ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(), // 기존 스크롤 기능 해제
                   shrinkWrap: true,
                   itemCount: workoutList.length,
                   itemBuilder: (context, int index) {
-                    return WorkoutSetCard(
-                      workoutSetModel: workoutList[index],
-                      index: index + 1,
-                      exerciseInfo: exerciseInfo,
+                    return GestureDetector(
+                      onTap: () {
+                        workoutSetProvider.selectedWorkoutSetModel = workoutList[index];
+                        BottomSheets.workout(context: context, workoutSetProvider: workoutSetProvider, exerciseInfo: exerciseInfo);
+                      },
+                      child: WorkoutSetCard(
+                        workoutSetModel: workoutList[index],
+                        index: index + 1,
+                        exerciseInfo: exerciseInfo,
+                      ),
                     );
                   },
                 ),

@@ -15,43 +15,44 @@ class WorkoutSetCard extends StatefulWidget {
 }
 
 class _WorkoutSetCardState extends State<WorkoutSetCard> {
-  bool isChecked = false;
-
   @override
   Widget build(BuildContext context) {
     WorkoutSetProvider workoutSetProvider = Provider.of(context, listen: true);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Checkbox(
-              value: widget.workoutSetModel.isComplete,
-              onChanged: (bool) {
-                widget.workoutSetModel.isComplete = bool!;
-                workoutSetProvider.updateOne(workoutSetModel: widget.workoutSetModel, changeModel: widget.workoutSetModel);
-                // setState(() => isChecked = bool!);
-              },
-            ),
-            Text('SET ${widget.index}'),
-          ],
-        ),
-        Row(
-          children: [
-            Text('${widget.workoutSetModel.unitCount} ${widget.exerciseInfo['unit']}'),
-            Visibility(
-              visible: widget.exerciseInfo['is_count'] == 1,
-              child: Row(
-                children: [
-                  Text(' X '),
-                  Text('${widget.workoutSetModel.count} 회'),
-                ],
+    return Container(
+      color: workoutSetProvider.selectedWorkoutSetModel?.workoutSetId == widget.workoutSetModel.workoutSetId ? Colors.grey : Colors.transparent,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Checkbox(
+                value: widget.workoutSetModel.isComplete,
+                onChanged: (bool) {
+                  widget.workoutSetModel.isComplete = bool!;
+                  workoutSetProvider.updateOne(workoutSetModel: widget.workoutSetModel, changeModel: widget.workoutSetModel);
+                  // setState(() => isChecked = bool!);
+                },
               ),
-            )
-          ],
-        )
-      ],
+              Text('SET ${widget.index}'),
+            ],
+          ),
+          Row(
+            children: [
+              Text('${widget.workoutSetModel.unitCount} ${widget.exerciseInfo['unit']}'),
+              Visibility(
+                visible: widget.exerciseInfo['is_count'] == 1,
+                child: Row(
+                  children: [
+                    Text(' X '),
+                    Text('${widget.workoutSetModel.count} 회'),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 }
