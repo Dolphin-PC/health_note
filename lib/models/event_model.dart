@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/db/table_names.dart';
+import 'package:health_note/models/group_exercise_model.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -95,5 +96,35 @@ class EventModel {
       ''');
 
     return List.generate(dayList.length, (index) => DateTime.parse(dayList[index]['day'].toString()));
+  }
+
+  static Future<List<DateTime>> getEventsForGroupByDay(GroupExerciseModel groupExerciseModel) async {
+    final db = await DBHelper().database;
+
+    final dayList = await db.rawQuery('''
+        select day
+          from event           m 
+          join exercise       d1 on m.exercise_id = d1.id
+          join group_exercise d2 on d1.group_id   = d2.id
+         where 1=1
+         ${groupExerciseModel.id != 0 ? 'and d2.id = ${groupExerciseModel.id}' : ''}
+      group by day;
+      ''');
+    return List.generate(dayList.length, (index) => DateTime.parse(dayList[index]['day'].toString()));
+  }
+
+  static Future<List<dynamic>> getEventsForGroupByGroup(GroupExerciseModel groupExerciseModel) async {
+    final db = await DBHelper().database;
+
+    List<dynamic> dayList = await db.rawQuery('''
+        select d1.*
+             , count(1)             as exercise_count
+          from event                m 
+          join exercise             d1 on m.exercise_id = d1.id
+          join group_exercise       d2 on d1.group_id   = d2.id
+      ${groupExerciseModel.id != 0 ? 'and d2.id = ${groupExerciseModel.id}' : ''}
+      group by d1.id
+       ''');
+    return dayList;
   }
 }

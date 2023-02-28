@@ -60,4 +60,5 @@ class Util {
   static getDateDisplayFormat(DateTime dateTime) => DateFormat('yyyy년 MM월 dd일').format(dateTime);
 
   static get getNowSimple => DateTime.utc(now.year, now.month, now.day);
+  static get getNowSimpleFormat => DateFormat('yyyy-MM-dd').format(now);
 }

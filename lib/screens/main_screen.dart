@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/screens/home_screen.dart';
+import 'package:health_note/screens/statics_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screenList = [
     const HomeScreen(),
-    const HomeScreen(),
+    const StaticsScreen(),
     const HomeScreen(),
   ];
 
