@@ -4,6 +4,7 @@ import 'package:health_note/models/youtube_music_model.dart';
 class YoutubeMusicProvider extends ChangeNotifier {
   bool _isRunning = false;
   bool _isInitial = false;
+  bool _isPlayerExpand = true;
   List<String> musicIdList = [];
 
   set isRunning(bool value) {
@@ -20,6 +21,13 @@ class YoutubeMusicProvider extends ChangeNotifier {
   }
 
   bool get isInitial => _isInitial;
+
+  set isPlayerExpand(bool value) {
+    _isPlayerExpand = value;
+    notifyListeners();
+  }
+
+  bool get isPlayerExpand => _isPlayerExpand;
 
   Future<List<YoutubeMusicModel>> selectList() async {
     return await YoutubeMusicModel.selectList();

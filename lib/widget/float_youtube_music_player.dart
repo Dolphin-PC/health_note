@@ -59,7 +59,6 @@ class _FloatYoutubeMusicPlayerState extends State<FloatYoutubeMusicPlayer> {
         },
       ),
       builder: (context, player) => SizedBox(
-        // width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.1,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,14 +92,19 @@ class _FloatYoutubeMusicPlayerState extends State<FloatYoutubeMusicPlayer> {
             Flexible(
               flex: 1,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () => youtubeMusicProvider.isRunning = !youtubeMusicProvider.isRunning,
                     child: youtubeMusicProvider.isRunning ? Icon(Icons.pause_outlined) : Icon(Icons.play_arrow),
                   ),
+                  // GestureDetector(
+                  //   onTap: () => youtubeMusicProvider.isPlayerExpand = false,
+                  //   child: Icon(Icons.fullscreen_exit),
+                  // ),
                   GestureDetector(
                     onTap: () => youtubeMusicProvider.isInitial = false,
-                    child: Icon(Icons.fullscreen_exit),
+                    child: Icon(Icons.disabled_by_default),
                   ),
                 ],
               ),

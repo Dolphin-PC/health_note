@@ -18,8 +18,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screenList = [
     const HomeScreen(),
     const StaticsScreen(),
-    const HomeScreen(),
     const YoutubeMusicListScreen(),
+    const HomeScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,18 +33,14 @@ class _MainScreenState extends State<MainScreen> {
     YoutubeMusicProvider youtubeMusicProvider = Provider.of(context, listen: true);
 
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      // floatingActionButton: Visibility(
-      //   visible: youtubeMusicProvider.isInitial,
-      //   child: SizedBox(width: 700, child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList)),
-      // ),
       body: Center(
         child: _screenList.elementAt(_selectedIndex),
       ),
       bottomSheet: Visibility(
         visible: youtubeMusicProvider.isInitial,
-        child: SizedBox(width: 700, child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList)),
+        child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList),
       ),
+      // floatingActionButton: FloatingActionButton(child: Icon(Icons.play_arrow)),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -68,17 +64,17 @@ class _MainScreenState extends State<MainScreen> {
               label: 'search'),
           BottomNavigationBarItem(
               icon: _selectedIndex == 2
+                  ? const Icon(Icons.music_note, color: Colors.black)
+                  : const Icon(
+                      Icons.music_note_outlined,
+                      color: Colors.black,
+                    ),
+              label: 'youtube'),
+          BottomNavigationBarItem(
+              icon: _selectedIndex == 3
                   ? const Icon(Icons.person, color: Colors.black)
                   : const Icon(
                       Icons.person_outline,
-                      color: Colors.black,
-                    ),
-              label: 'profile'),
-          BottomNavigationBarItem(
-              icon: _selectedIndex == 3
-                  ? const Icon(Icons.play_arrow, color: Colors.black)
-                  : const Icon(
-                      Icons.play_arrow_outlined,
                       color: Colors.black,
                     ),
               label: 'profile')
@@ -86,8 +82,10 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
         onTap: _onItemTapped,
-        showSelectedLabels: false, //(1)
-        showUnselectedLabels: false, //(1)
+        showSelectedLabels: false,
+        //(1)
+        showUnselectedLabels: false,
+        //(1)
         type: BottomNavigationBarType.fixed, //(2)
       ),
     );

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:health_note/models/youtube_music_model.dart';
 import 'package:health_note/providers/youtube_music_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/dialogs.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubeMusicListScreen extends StatefulWidget {
@@ -70,7 +73,7 @@ class _YoutubeMusicListScreenState extends State<YoutubeMusicListScreen> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // Text(list[idx].id),
                                 IconButton(
@@ -80,6 +83,31 @@ class _YoutubeMusicListScreenState extends State<YoutubeMusicListScreen> {
                                   },
                                 ),
                                 Text(list[idx].url),
+                                IconButton(
+                                  icon: Icon(Icons.outbond),
+                                  onPressed: () async {
+                                    String youtubeUrl = list[idx].url;
+                                    Uri url = Uri.parse(youtubeUrl);
+                                    // TODO IOS 테스트 필요
+                                    if (Platform.isIOS) {
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      } else {
+                                        if (await canLaunchUrl(url)) {
+                                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                                        } else {
+                                          throw 'Could not launch https://$youtubeUrl';
+                                        }
+                                      }
+                                    } else {
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      } else {
+                                        throw 'Could not launch $youtubeUrl';
+                                      }
+                                    }
+                                  },
+                                ),
                               ],
                             ),
                           );
