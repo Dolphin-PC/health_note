@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/providers/youtube_music_provider.dart';
 import 'package:health_note/screens/home_screen.dart';
+import 'package:health_note/screens/run_exercise_screen.dart';
 import 'package:health_note/screens/statics_screen.dart';
 import 'package:health_note/screens/youtube_music_list_screen.dart';
 import 'package:health_note/widget/float_youtube_music_player.dart';
@@ -40,7 +41,12 @@ class _MainScreenState extends State<MainScreen> {
         visible: youtubeMusicProvider.isInitial,
         child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList),
       ),
-      // floatingActionButton: FloatingActionButton(child: Icon(Icons.play_arrow)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const RunExerciseScreen(), fullscreenDialog: true));
+          },
+          child: Icon(Icons.play_arrow)),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
