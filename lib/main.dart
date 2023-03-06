@@ -5,6 +5,7 @@ import 'package:health_note/providers/exercise_provider.dart';
 import 'package:health_note/providers/group_exercise_provider.dart';
 import 'package:health_note/providers/statics_provider.dart';
 import 'package:health_note/providers/workout_set_provider.dart';
+import 'package:health_note/providers/youtube_music_provider.dart';
 import 'package:health_note/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => EventProvider()),
       ChangeNotifierProvider(create: (_) => WorkoutSetProvider()),
       ChangeNotifierProvider(create: (_) => StaticsProvider()),
+      ChangeNotifierProvider(create: (_) => YoutubeMusicProvider()),
     ],
     child: const MyApp(),
   ));

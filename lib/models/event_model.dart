@@ -88,14 +88,15 @@ class EventModel {
   static Future<List<DateTime>> selectEventGroupByDay() async {
     final db = await DBHelper().database;
 
-    // List<DateTime> resultList = [];
+    List<DateTime> resultList = [];
     final dayList = await db.rawQuery('''
           select day from event 
-          where is_delete = false
+          where is_delete = 0
         group by day;
       ''');
 
     return List.generate(dayList.length, (index) => DateTime.parse(dayList[index]['day'].toString()));
+    // return resultList;
   }
 
   static Future<List<DateTime>> getEventsForGroupByDay(GroupExerciseModel groupExerciseModel) async {

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:health_note/providers/youtube_music_provider.dart';
 import 'package:health_note/screens/home_screen.dart';
 import 'package:health_note/screens/statics_screen.dart';
+import 'package:health_note/screens/youtube_music_list_screen.dart';
+import 'package:health_note/widget/float_youtube_music_player.dart';
+import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -15,6 +19,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const StaticsScreen(),
     const HomeScreen(),
+    const YoutubeMusicListScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -25,9 +30,20 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    YoutubeMusicProvider youtubeMusicProvider = Provider.of(context, listen: true);
+
     return Scaffold(
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      // floatingActionButton: Visibility(
+      //   visible: youtubeMusicProvider.isInitial,
+      //   child: SizedBox(width: 700, child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList)),
+      // ),
       body: Center(
         child: _screenList.elementAt(_selectedIndex),
+      ),
+      bottomSheet: Visibility(
+        visible: youtubeMusicProvider.isInitial,
+        child: SizedBox(width: 700, child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList)),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
@@ -55,6 +71,14 @@ class _MainScreenState extends State<MainScreen> {
                   ? const Icon(Icons.person, color: Colors.black)
                   : const Icon(
                       Icons.person_outline,
+                      color: Colors.black,
+                    ),
+              label: 'profile'),
+          BottomNavigationBarItem(
+              icon: _selectedIndex == 3
+                  ? const Icon(Icons.play_arrow, color: Colors.black)
+                  : const Icon(
+                      Icons.play_arrow_outlined,
                       color: Colors.black,
                     ),
               label: 'profile')

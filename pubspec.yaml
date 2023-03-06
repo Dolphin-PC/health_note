@@ -44,6 +44,8 @@ dependencies:
   path: ^1.8.2
   intl: ^0.18.0
   collection: ^1.17.0
+  youtube_player_flutter: ^8.1.2
+  youtube_explode_dart: ^1.7.0
 
 dev_dependencies:
   flutter_test:

@@ -35,6 +35,7 @@ class DBHelper {
     // await db.execute('DROP TABLE if exists exercise');
     // await db.execute('DROP TABLE if exists event');
     // await db.execute('DROP TABLE if exists workout_set');
+    // await db.execute('DROP TABLE if exists youtube_music');
 
     String sql1 = '''
       CREATE TABLE if not exists group_exercise (
@@ -81,9 +82,17 @@ class DBHelper {
       );
     ''';
 
+    String sql5 = '''
+      CREATE TABLE if not exists youtube_music (
+          id  VARCHAR PRIMARY KEY,
+          url VARCHAR NOT NULL
+      );
+    ''';
+
     await db.execute(sql1);
     await db.execute(sql2);
     await db.execute(sql3);
     await db.execute(sql4);
+    await db.execute(sql5);
   }
 }
