@@ -44,7 +44,7 @@ class _WorkoutSetCardState extends State<WorkoutSetCard> {
                 visible: widget.exerciseInfo['is_count'] == 1,
                 child: Row(
                   children: [
-                    Text(' X '),
+                    const Text(' X '),
                     Text('${widget.workoutSetModel.count} 회'),
                   ],
                 ),

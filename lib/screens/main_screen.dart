@@ -41,12 +41,6 @@ class _MainScreenState extends State<MainScreen> {
         visible: youtubeMusicProvider.isInitial,
         child: FloatYoutubeMusicPlayer(ids: youtubeMusicProvider.musicIdList),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const RunExerciseScreen(), fullscreenDialog: true));
-          },
-          child: Icon(Icons.play_arrow)),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(

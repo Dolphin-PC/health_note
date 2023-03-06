@@ -29,7 +29,8 @@ class _EventCardState extends State<EventCard> {
   }
 
   Future<Text> titleText() async {
-    var selectEventById = await eventProvider.selectEventById(eventModel: widget.eventModel);
+    var selectEventById =
+        await eventProvider.selectEventById(eventModel: widget.eventModel);
     exerciseInfo = selectEventById[0];
     String exerciseName = exerciseInfo['exercise_name'];
     String groupName = exerciseInfo['group_name'];
@@ -75,11 +76,13 @@ class _EventCardState extends State<EventCard> {
           height: 1,
         ),
         FutureBuilder(
-          future: workoutSetProvider.selectList(whereArgs: [widget.eventModel.eventId], isDelete: false),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
+          future: workoutSetProvider.selectList(
+              whereArgs: [widget.eventModel.eventId], isDelete: false),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<WorkoutSetModel>> snapshot) {
             if (!snapshot.hasData) return Text('');
 
-            List<WorkoutSetModel> workoutList = snapshot.data;
+            List<WorkoutSetModel> workoutList = snapshot.data!;
             return Column(
               children: [
                 ListView.builder(
@@ -89,8 +92,13 @@ class _EventCardState extends State<EventCard> {
                   itemBuilder: (context, int index) {
                     return GestureDetector(
                       onTap: () {
-                        workoutSetProvider.selectedWorkoutSetModel = workoutList[index];
-                        BottomSheets.workout(context: context, workoutSetProvider: workoutSetProvider, exerciseInfo: exerciseInfo);
+                        workoutSetProvider.selectedWorkoutSetModel =
+                            workoutList[index];
+                        BottomSheets.workout(
+                          context: context,
+                          workoutSetProvider: workoutSetProvider,
+                          exerciseInfo: exerciseInfo,
+                        );
                       },
                       child: WorkoutSetCard(
                         workoutSetModel: workoutList[index],
@@ -107,8 +115,9 @@ class _EventCardState extends State<EventCard> {
                       fit: FlexFit.tight,
                       child: OutlinedButton(
                         onPressed: () {
-                          if (workoutList.length > 0) {
-                            workoutSetProvider.deleteOne(workoutSetModel: workoutList.last);
+                          if (workoutList.isNotEmpty) {
+                            workoutSetProvider.deleteOne(
+                                workoutSetModel: workoutList.last);
                           }
                         },
                         child: Text(
@@ -117,19 +126,22 @@ class _EventCardState extends State<EventCard> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    const SizedBox(width: 10),
                     Flexible(
                       fit: FlexFit.tight,
                       child: OutlinedButton(
                         onPressed: () {
-                          if (workoutList.length > 0) {
+                          if (workoutList.isNotEmpty) {
                             workoutList.last.workoutSetId = null;
-                            workoutSetProvider.insertOne(workoutSetModel: workoutList.last);
+                            workoutSetProvider.insertOne(
+                                workoutSetModel: workoutList.last);
                           } else {
                             workoutSetProvider.insertOne(
-                              workoutSetModel: WorkoutSetModel(eventId: widget.eventModel.eventId, count: 0, unitCount: 0),
+                              workoutSetModel: WorkoutSetModel(
+                                eventId: widget.eventModel.eventId,
+                                count: 0,
+                                unitCount: 0,
+                              ),
                             );
                           }
                         },

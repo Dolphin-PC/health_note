@@ -55,6 +55,30 @@ class WorkoutSetModel {
     return list;
   }
 
+  static Future<List<dynamic>> selectListForRunExercise({required String day}) async {
+    final db = await DBHelper().database;
+    final List<Map<String, dynamic>> list = await db.rawQuery('''
+      select 
+             d3.group_name    as group_exercise_name
+           , d2.exercise_name as exercise_name
+           , d2.unit          as exercise_unit
+           , d2.is_count      as is_count
+           , d1.day           as day
+           , d1.is_complete   as event_complete
+           , m.workout_set_id as workout_set_id
+           , m.unit_count     as unit_count
+           , m.count          as count
+           , m.is_complete    as workout_is_complete
+        from workout_set     m 
+        join event          d1 on m.event_id  = d1.event_id
+        join exercise       d2 on d1.event_id = d2.id
+        join group_exercise d3 on d2.group_id = d3.id
+       where d1.day = $day
+    ''');
+    return list;
+  }
+
+
   Future<void> insert() async {
     final db = await DBHelper().database;
 

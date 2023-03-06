@@ -26,10 +26,12 @@ class _FloatYoutubeMusicPlayerState extends State<FloatYoutubeMusicPlayer> {
   @override
   void initState() {
     super.initState();
-    _controller = YoutubePlayerController(
-      initialVideoId: widget.ids.first,
-      flags: const YoutubePlayerFlags(mute: false, autoPlay: true, disableDragSeek: false, loop: false, isLive: false, forceHD: false, enableCaption: false, hideControls: true),
-    )..addListener(listener);
+    if(widget.ids.length > 0) {
+      _controller = YoutubePlayerController(
+        initialVideoId: widget.ids.first,
+        flags: const YoutubePlayerFlags(mute: false, autoPlay: true, disableDragSeek: false, loop: false, isLive: false, forceHD: false, enableCaption: false, hideControls: true),
+      )..addListener(listener);
+    }
   }
 
   void listener() {

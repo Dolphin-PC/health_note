@@ -15,7 +15,9 @@ class YoutubeMusicProvider extends ChangeNotifier {
   bool get isRunning => _isRunning;
 
   set isInitial(bool value) {
-    if (value == false) isRunning = false;
+    if (musicIdList.isEmpty) return;
+
+    isRunning = value;
     _isInitial = value;
     notifyListeners();
   }

@@ -49,17 +49,17 @@ class BottomSheets {
                   children: [
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Text('닫기'),
+                      child: const Text('닫기'),
                     ),
                     Row(
                       children: [
                         TextButton(
                           onPressed: () => onButtonUnitCountAction(value: -5),
-                          child: Text('-5'),
+                          child: const Text('-5'),
                         ),
                         TextButton(
                           onPressed: () => onButtonUnitCountAction(value: -1),
-                          child: Text('-1'),
+                          child: const Text('-1'),
                         ),
                         Flexible(
                           child: Padding(
@@ -85,11 +85,11 @@ class BottomSheets {
                         ),
                         TextButton(
                           onPressed: () => onButtonUnitCountAction(value: 1),
-                          child: Text('+1'),
+                          child: const Text('+1'),
                         ),
                         TextButton(
                           onPressed: () => onButtonUnitCountAction(value: 5),
-                          child: Text('+5'),
+                          child: const Text('+5'),
                         ),
                       ],
                     ),
@@ -99,17 +99,17 @@ class BottomSheets {
                         children: [
                           TextButton(
                             onPressed: () => onButtonCountAction(value: -5),
-                            child: Text('-5'),
+                            child: const Text('-5'),
                           ),
                           TextButton(
                             onPressed: () => onButtonCountAction(value: -1),
-                            child: Text('-1'),
+                            child: const Text('-1'),
                           ),
                           Flexible(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: TextField(
-                                decoration: InputDecoration(suffixText: '회'),
+                                decoration: const InputDecoration(suffixText: '회'),
                                 textAlign: TextAlign.center,
                                 controller: countController,
                                 keyboardType: TextInputType.number,
@@ -129,11 +129,11 @@ class BottomSheets {
                           ),
                           TextButton(
                             onPressed: () => onButtonCountAction(value: 1),
-                            child: Text('+1'),
+                            child: const Text('+1'),
                           ),
                           TextButton(
                             onPressed: () => onButtonCountAction(value: 5),
-                            child: Text('+5'),
+                            child: const Text('+5'),
                           ),
                         ],
                       ),

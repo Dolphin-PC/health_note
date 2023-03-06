@@ -3,8 +3,10 @@ import 'package:health_note/common/util.dart';
 import 'package:health_note/models/event_model.dart';
 import 'package:health_note/providers/event_provider.dart';
 import 'package:health_note/screens/add_exercise_screen.dart';
+import 'package:health_note/screens/run_exercise_screen.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/event_card.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -19,7 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _selectedDay = Util.getNowSimple;
   DateTime _focusedDay = Util.getNowSimple;
 
-  bool isShowCalendar = false;
+  bool isShowCalendar = true;
+  late List<EventModel> eventsToday = [];
 
   void onTapTitle() {
     setState(() => isShowCalendar = !isShowCalendar);
@@ -35,6 +38,20 @@ class _HomeScreenState extends State<HomeScreen> {
     EventProvider eventProvider = Provider.of(context, listen: true);
 
     return Scaffold(
+      floatingActionButton: Visibility(
+        visible: eventsToday.isNotEmpty,
+        child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RunExerciseScreen(day: DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay)),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
+            child: Icon(Icons.play_arrow)),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         centerTitle: false,
@@ -44,14 +61,18 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddExerciseScreen(), fullscreenDialog: true),
+                MaterialPageRoute(
+                  builder: (context) => const AddExerciseScreen(),
+                  fullscreenDialog: true,
+                ),
               );
             },
           )
         ],
         title: TextButton(
           onPressed: onTapTitle,
-          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay), style: TextStyles.headText),
+          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay),
+              style: TextStyles.headText),
         ),
       ),
       body: Padding(
@@ -65,9 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) return Text('loading');
 
-                  final Map<DateTime, List<EventModel>> eventList = snapshot.data;
+                  final Map<DateTime, List<EventModel>> eventList =
+                      snapshot.data;
                   return TableCalendar(
-                    eventLoader: (DateTime day) => eventProvider.getEventForDay(eventList, DateTime(day.year, day.month, day.day)),
+                    eventLoader: (DateTime day) => eventProvider.getEventForDay(
+                        eventList, DateTime(day.year, day.month, day.day)),
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         eventProvider.selectedDay = selectedDay;
@@ -94,17 +117,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             FutureBuilder(
-              future: eventProvider.getEventsPerDay(day: _selectedDay, isDelete: false),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
+              future: eventProvider.getEventsPerDay(
+                  day: _selectedDay, isDelete: false),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<EventModel>> snapshot) {
                 if (!snapshot.hasData) return const Text('...');
 
+                eventsToday = snapshot.data!;
                 return Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.only(bottom: 200),
                     shrinkWrap: true,
-                    itemCount: snapshot.data.length,
+                    itemCount: eventsToday.length,
                     itemBuilder: (context, idx) {
-                      return EventCard(eventModel: snapshot.data[idx]);
+                      return EventCard(eventModel: eventsToday[idx]);
                     },
                   ),
                 );

@@ -19,6 +19,10 @@ class WorkoutSetProvider extends ChangeNotifier {
     return await WorkoutSetModel.selectList(whereArgs: whereArgs, isDelete: isDelete);
   }
 
+  Future<List<dynamic>> selectListForRunExercise({required String day}) async {
+    return await WorkoutSetModel.selectListForRunExercise(day: day);
+  }
+
   Future insertOne({required WorkoutSetModel workoutSetModel}) async {
     workoutSetModel.insert();
     notifyListeners();

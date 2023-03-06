@@ -40,7 +40,7 @@ class _YoutubeMusicListScreenState extends State<YoutubeMusicListScreen> {
               List<YoutubeMusicModel> youtubeMusicList = await youtubeMusicProvider.selectList();
               youtubeMusicProvider.musicIdList = List.generate(youtubeMusicList.length, (index) => youtubeMusicList[index].id!);
               if (!youtubeMusicProvider.isRunning) youtubeMusicProvider.isInitial = true;
-              youtubeMusicProvider.isRunning = !youtubeMusicProvider.isRunning;
+              // youtubeMusicProvider.isRunning = !youtubeMusicProvider.isRunning;
             },
           ),
           IconButton(
