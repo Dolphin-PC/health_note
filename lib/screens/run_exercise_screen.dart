@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
+import 'package:health_note/main.dart';
 import 'package:health_note/providers/run_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -17,27 +18,43 @@ class RunExerciseScreen extends StatefulWidget {
 }
 
 class _RunExerciseScreenState extends State<RunExerciseScreen> {
-  static const initMinute = 0;
-  int totalSeconds = initMinute;
-  int setSeconds = initMinute;
-  late Timer totalTime, setTime;
-  bool isRunning = false;
-  bool isStarted = false;
+  static const initMinute = 0; // 초기 시간
+  int totalSeconds = initMinute; // 전체 시간
+  int setSeconds = initMinute; // 세트당
 
-  int indexCount = 1;
-  late int maxCount = 0;
+  late Timer totalTime, setTime;
+  bool isRunning = false, isStarted = false, isLastWorkoutSet = false;
+
+  int indexCount = 1, maxCount = 0;
+
+  List<Map<String, List<dynamic>>> eventsMapList = [];
+  Map<String, List<dynamic>> eventPerWorkoutMap = {};
 
   late RunExerciseProvider runExerciseProvider;
   late EventProvider eventProvider;
   late var runInfo;
+  double exercisePercent = 0, workoutPercent = 0;
 
   @override
   void initState() {
     super.initState();
     Util.execAfterBinding(() async {
-      String dayFormat = DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay);
+      String dayFormat =
+          DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay);
       await runExerciseProvider.init(day: dayFormat);
       maxCount = runExerciseProvider.runList.length;
+      // logger.d(runExerciseProvider.runList);
+
+      for (var map in runExerciseProvider.runList) {
+        String eventId = map['event_id'].toString();
+        if (!eventPerWorkoutMap.containsKey(eventId))
+          eventPerWorkoutMap[eventId] = [];
+        eventPerWorkoutMap[eventId]!.add(map);
+      }
+
+      eventPerWorkoutMap
+          .forEach((key, value) => eventsMapList.add({key: value}));
+
       setState(() {});
     });
   }
@@ -50,6 +67,8 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
     if (runExerciseProvider.isInit) {
       runInfo = runExerciseProvider.runList[indexCount - 1];
     }
+
+    double fitWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,28 +93,49 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                   Flexible(
                     flex: 5,
                     fit: FlexFit.tight,
-                    child: Stack(
-                      children: <Widget>[
-                        Flexible(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 15,
-                              value: 1.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: SizedBox(
+                              width: fitWidth * 0.8,
+                              height: fitWidth * 0.8,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.grey[300],
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.green),
+                                strokeWidth: 15,
+                                value: exercisePercent / 100,
+                              ),
                             ),
                           ),
-                        ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(runInfo['group_exercise_name']),
-                              Text(runInfo['exercise_name']),
-                              Text(timeFormat(setSeconds)),
-                              Text('SET $indexCount'),
-                            ],
+                          Center(
+                            child: SizedBox(
+                              width: fitWidth * 0.6,
+                              height: fitWidth * 0.6,
+                              child: CircularProgressIndicator(
+                                backgroundColor: Colors.grey[300],
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.blue),
+                                strokeWidth: 15,
+                                value: workoutPercent / 100,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(runInfo['group_exercise_name']),
+                                Text(runInfo['exercise_name']),
+                                Text(timeFormat(setSeconds)),
+                                Text('SET $indexCount'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Flexible(
@@ -119,9 +159,12 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                           child: FittedBox(
                             child: IconButton(
                               icon: Icon(
-                                isRunning ? Icons.pause_circle_outline : Icons.play_circle_outline,
+                                isRunning
+                                    ? Icons.pause_circle_outline
+                                    : Icons.play_circle_outline,
                               ),
-                              onPressed: isRunning ? onPausePressed : onStartPressed,
+                              onPressed:
+                                  isRunning ? onPausePressed : onStartPressed,
                             ),
                           ),
                         ),
@@ -131,7 +174,8 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                           child: FittedBox(
                             child: IconButton(
                               icon: Icon(Icons.next_plan),
-                              onPressed: onNextSetPressed,
+                              onPressed:
+                                  isLastWorkoutSet ? null : onNextSetPressed,
                             ),
                           ),
                         ),
@@ -176,10 +220,16 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
   }
 
   void onNextSetPressed() {
-    if (indexCount + 1 == maxCount) return;
+    logger.d(indexCount);
+    logger.d(maxCount);
     setState(() {
       setSeconds = initMinute;
       indexCount++;
     });
+    if (indexCount == maxCount) {
+      setState(() {
+        isLastWorkoutSet = true;
+      });
+    }
   }
 }

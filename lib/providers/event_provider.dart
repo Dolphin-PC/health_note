@@ -13,7 +13,6 @@ class EventProvider extends ChangeNotifier {
 
   Future<List<EventModel>> get eventsToday async {
     _eventsToday = await getEventsPerDay(day: _selectedDay, isDelete: false);
-    logger.d(_eventsToday);
     return _eventsToday ?? [];
   }
 
@@ -40,7 +39,6 @@ class EventProvider extends ChangeNotifier {
 
   Future<List<EventModel>> getEventsPerDay({required DateTime day, bool isDelete = true}) async {
     List whereArgs = [DateFormat("yyyy-MM-dd").format(day)];
-    logger.d(whereArgs);
 
 
     return await selectList(whereArgs: whereArgs, isDelete: isDelete);

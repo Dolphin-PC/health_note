@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/db/table_names.dart';
+import 'package:health_note/main.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class WorkoutSetModel {
@@ -69,12 +70,14 @@ class WorkoutSetModel {
            , m.unit_count     as unit_count
            , m.count          as count
            , m.is_complete    as workout_is_complete
+           , m.event_id       as event_id
         from workout_set     m 
         join event          d1 on m.event_id  = d1.event_id
         join exercise       d2 on d1.event_id = d2.id
         join group_exercise d3 on d2.group_id = d3.id
        where d1.day = '$day'
-       order by m.workout_set_id asc
+         and m.is_delete = 0
+       order by m.event_id asc, m.workout_set_id asc
     ''';
     // logger.d(sqlStr);
     final List<dynamic> list = await db.rawQuery(sqlStr);

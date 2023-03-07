@@ -48,7 +48,6 @@ class EventModel {
     if (isDelete == false) {
       list = list.where((element) => element.isDelete == isDelete).toList();
     }
-    loggerNoStack.d(list);
 
     return list;
   }
