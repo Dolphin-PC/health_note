@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/db/table_names.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -57,8 +57,8 @@ class WorkoutSetModel {
 
   static Future<List<dynamic>> selectListForRunExercise({required String day}) async {
     final db = await DBHelper().database;
-    final List<Map<String, dynamic>> list = await db.rawQuery('''
-      select 
+    String sqlStr = '''
+      select /* workout_set_model.selectListForRunExercise */
              d3.group_name    as group_exercise_name
            , d2.exercise_name as exercise_name
            , d2.unit          as exercise_unit
@@ -73,11 +73,14 @@ class WorkoutSetModel {
         join event          d1 on m.event_id  = d1.event_id
         join exercise       d2 on d1.event_id = d2.id
         join group_exercise d3 on d2.group_id = d3.id
-       where d1.day = $day
-    ''');
+       where d1.day = '$day'
+       order by m.workout_set_id asc
+    ''';
+    // logger.d(sqlStr);
+    final List<dynamic> list = await db.rawQuery(sqlStr);
+
     return list;
   }
-
 
   Future<void> insert() async {
     final db = await DBHelper().database;

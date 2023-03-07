@@ -6,7 +6,6 @@ import 'package:health_note/screens/add_exercise_screen.dart';
 import 'package:health_note/screens/run_exercise_screen.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:health_note/widget/event_card.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -41,11 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Visibility(
         visible: eventsToday.isNotEmpty,
         child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => RunExerciseScreen(day: DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay)),
+                  builder: (context) => const RunExerciseScreen(),
                   fullscreenDialog: true,
                 ),
               );
@@ -71,8 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         title: TextButton(
           onPressed: onTapTitle,
-          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay),
-              style: TextStyles.headText),
+          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay), style: TextStyles.headText),
         ),
       ),
       body: Padding(
@@ -86,11 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) return Text('loading');
 
-                  final Map<DateTime, List<EventModel>> eventList =
-                      snapshot.data;
+                  final Map<DateTime, List<EventModel>> eventList = snapshot.data;
                   return TableCalendar(
-                    eventLoader: (DateTime day) => eventProvider.getEventForDay(
-                        eventList, DateTime(day.year, day.month, day.day)),
+                    eventLoader: (DateTime day) => eventProvider.getEventForDay(eventList, DateTime(day.year, day.month, day.day)),
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         eventProvider.selectedDay = selectedDay;
@@ -117,10 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             FutureBuilder(
-              future: eventProvider.getEventsPerDay(
-                  day: _selectedDay, isDelete: false),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<EventModel>> snapshot) {
+              future: eventProvider.getEventsPerDay(day: _selectedDay, isDelete: false),
+              builder: (BuildContext context, AsyncSnapshot<List<EventModel>> snapshot) {
                 if (!snapshot.hasData) return const Text('...');
 
                 eventsToday = snapshot.data!;
