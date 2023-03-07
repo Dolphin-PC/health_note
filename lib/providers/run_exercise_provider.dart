@@ -9,6 +9,7 @@ class RunExerciseProvider extends ChangeNotifier {
   Future<void> init({required String day}) async {
     runDay = day;
     runList = await WorkoutSetModel.selectListForRunExercise(day: runDay);
+
     isInit = true;
     notifyListeners();
   }

@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
+import 'package:health_note/main.dart';
 import 'package:health_note/models/event_model.dart';
 import 'package:intl/intl.dart';
 
 class EventProvider extends ChangeNotifier {
   DateTime _selectedDay = Util.getNowSimple;
+  List<EventModel>? _eventsToday;
 
-  set selectedDay(select) {
-    _selectedDay = select;
-    print(_selectedDay);
+  set selectedDay(select) => _selectedDay = select;
+  get selectedDay => _selectedDay;
+
+  Future<List<EventModel>> get eventsToday async {
+    _eventsToday = await getEventsPerDay(day: _selectedDay, isDelete: false);
+    logger.d(_eventsToday);
+    return _eventsToday ?? [];
   }
 
-  get selectedDay => _selectedDay;
+
 
   Future<List<EventModel>> selectList({required whereArgs, bool isDelete = true}) async {
     return await EventModel.selectList(whereArgs: whereArgs, isDelete: isDelete);
@@ -34,8 +40,11 @@ class EventProvider extends ChangeNotifier {
 
   Future<List<EventModel>> getEventsPerDay({required DateTime day, bool isDelete = true}) async {
     List whereArgs = [DateFormat("yyyy-MM-dd").format(day)];
+    logger.d(whereArgs);
+
 
     return await selectList(whereArgs: whereArgs, isDelete: isDelete);
+
   }
 
   Future<Map<DateTime, List<EventModel>>> getEventList() async {

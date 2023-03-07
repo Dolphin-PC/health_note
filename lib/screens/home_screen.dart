@@ -21,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _focusedDay = Util.getNowSimple;
 
   bool isShowCalendar = true;
-  late List<EventModel> eventsToday = [];
 
   void onTapTitle() {
     setState(() => isShowCalendar = !isShowCalendar);
@@ -37,22 +36,31 @@ class _HomeScreenState extends State<HomeScreen> {
     EventProvider eventProvider = Provider.of(context, listen: true);
 
     return Scaffold(
-      floatingActionButton: Visibility(
-        visible: eventsToday.isNotEmpty,
-        child: FloatingActionButton(
-            onPressed: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RunExerciseScreen(),
-                  fullscreenDialog: true,
-                ),
-              );
-            },
-            child: Icon(Icons.play_arrow)),
+      floatingActionButton: FutureBuilder(
+        future: eventProvider.eventsToday,
+        builder: ((context, AsyncSnapshot<List<EventModel>> snapshot) {
+          if(!snapshot.hasData) return Text('');
+          return Visibility(
+            visible: snapshot.data!.isNotEmpty,
+            child: FloatingActionButton(
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RunExerciseScreen(),
+                    fullscreenDialog: true,
+                  ),
+                );
+              },
+              child: Icon(Icons.play_arrow),),
+          );
+
+        }),
       ),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme
+            .of(context)
+            .primaryColor,
         centerTitle: false,
         actions: [
           IconButton(
@@ -70,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         title: TextButton(
           onPressed: onTapTitle,
-          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay), style: TextStyles.headText),
+          child: Text(Util.getDateDisplayFormat(eventProvider.selectedDay),
+              style: TextStyles.headText),
         ),
       ),
       body: Padding(
@@ -84,9 +93,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) return Text('loading');
 
-                  final Map<DateTime, List<EventModel>> eventList = snapshot.data;
+                  final Map<DateTime, List<EventModel>> eventList = snapshot
+                      .data;
                   return TableCalendar(
-                    eventLoader: (DateTime day) => eventProvider.getEventForDay(eventList, DateTime(day.year, day.month, day.day)),
+                    eventLoader: (DateTime day) =>
+                        eventProvider.getEventForDay(
+                            eventList, DateTime(day.year, day.month, day.day)),
                     onDaySelected: (selectedDay, focusedDay) {
                       setState(() {
                         eventProvider.selectedDay = selectedDay;
@@ -113,11 +125,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             FutureBuilder(
-              future: eventProvider.getEventsPerDay(day: _selectedDay, isDelete: false),
-              builder: (BuildContext context, AsyncSnapshot<List<EventModel>> snapshot) {
+              future: eventProvider.eventsToday,
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<EventModel>> snapshot) {
                 if (!snapshot.hasData) return const Text('...');
 
-                eventsToday = snapshot.data!;
+                List<EventModel> eventsToday = snapshot.data!;
                 return Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.only(bottom: 200),

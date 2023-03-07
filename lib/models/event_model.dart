@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_note/db/db_helper.dart';
 import 'package:health_note/db/table_names.dart';
+import 'package:health_note/main.dart';
 import 'package:health_note/models/group_exercise_model.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -32,7 +33,7 @@ class EventModel {
 
   static Future<List<EventModel>> selectList({required List whereArgs, bool isDelete = true}) async {
     final db = await DBHelper().database;
-    final List<Map<String, dynamic>> maps = await db.query(TableNames.event, where: 'day = ?', whereArgs: whereArgs);
+    final List<dynamic> maps = await db.query(TableNames.event, where: 'day = ?', whereArgs: whereArgs);
 
     var list = List.generate(maps.length, (i) {
       return EventModel(
@@ -47,6 +48,7 @@ class EventModel {
     if (isDelete == false) {
       list = list.where((element) => element.isDelete == isDelete).toList();
     }
+    loggerNoStack.d(list);
 
     return list;
   }
