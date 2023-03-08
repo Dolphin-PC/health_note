@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
+import 'package:health_note/main.dart';
 import 'package:health_note/providers/run_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -32,13 +33,15 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
   // 하단 버튼 컨트롤에 필요한 변수
   int indexCount = 1, maxCount = 0;
   // circular 컨트롤에 필요한 변수
-  int currentEventIndex = 0, currentWorkoutIndex = 0;
+  int currentEventIndex = 1, currentWorkoutIndex = 1;
   String currentEventId = "";
   double eventPercent = 0, workoutPercent = 0;
 
   // List<Map<String, List<dynamic>>> eventsMapList = [];
   List<String> eventIdList = [];
-  Map<String, List<dynamic>> eventPerWorkoutMap = {};
+  // Map<String, List<dynamic>> eventPerWorkoutMap = {};
+  List<dynamic> workoutList = [];
+  List<dynamic> allWorkoutList = [];
 
   // 현재 운동정보
   bool isInit = false;
@@ -50,31 +53,29 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
     Util.execAfterBinding(() async {
       String dayFormat = DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay);
       await runExerciseProvider.init(day: dayFormat);
-      maxCount = runExerciseProvider.runList.length;
-      // logger.d(runExerciseProvider.runList);
+      allWorkoutList = runExerciseProvider.runList;
+      maxCount = allWorkoutList.length;
 
-      for (var map in runExerciseProvider.runList) {
+      for (var map in allWorkoutList) {
         String eventId = map['event_id'].toString();
-        if (!eventPerWorkoutMap.containsKey(eventId)) {
-          eventPerWorkoutMap[eventId] = [];
+        if (!eventIdList.contains(eventId)) {
           eventIdList.add(eventId);
         }
-        eventPerWorkoutMap[eventId]!.add(map);
       }
+      currentEventId = eventIdList.first;
+      workoutList = allWorkoutList.where((element) => element['event_id'].toString() == currentEventId).toList();
 
       setState(() {
-        currentEventId = eventIdList.first;
-        calculatePercent();
-
-        runInfo = eventPerWorkoutMap[currentEventId]!.first;
+        runInfo = workoutList.first;
         isInit = true;
+        calculatePercent();
       });
     });
   }
 
   void calculatePercent() {
-    eventPercent = (currentEventIndex + 1) / eventIdList.length;
-    workoutPercent = (currentWorkoutIndex + 1) / eventPerWorkoutMap[currentEventId]!.length;
+    eventPercent = currentEventIndex / eventIdList.length;
+    workoutPercent = currentWorkoutIndex / workoutList.length;
   }
 
   @override
@@ -142,7 +143,7 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                                 Text(runInfo['group_exercise_name']),
                                 Text(runInfo['exercise_name']),
                                 Text(timeFormat(setSeconds)),
-                                Text('SET $indexCount'),
+                                Text('SET $currentWorkoutIndex'),
                               ],
                             ),
                           ),
@@ -229,17 +230,34 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
 
   void onNextSetPressed() {
     // 타이머 및 버튼 컨트롤
-    setState(() {
-      setSeconds = initMinute;
-      indexCount++;
-    });
+    setSeconds = initMinute;
+    indexCount++;
     if (indexCount == maxCount) {
       setState(() {
         isLastWorkoutSet = true;
       });
     }
 
+    onNextWorkout();
+  }
+
+  void onNextWorkout() {
+    runInfo = allWorkoutList[indexCount-1];
+    String nextEventId = runInfo['event_id'].toString();
+
+    if(nextEventId != currentEventId){
+      currentEventId = nextEventId;
+      workoutList = allWorkoutList.where((element) => element['event_id'].toString() == currentEventId).toList();
+      currentWorkoutIndex = 1;
+      currentEventIndex++;
+    } else {
+      currentWorkoutIndex++;
+    }
+
     // 퍼센트 컨트롤
-    // eventPerWorkoutMap[currentEventIndex].inde
+    calculatePercent();
+    setState(() {
+
+    });
   }
 }
