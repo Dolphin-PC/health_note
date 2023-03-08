@@ -61,4 +61,10 @@ class Util {
 
   static get getNowSimple => DateTime.utc(now.year, now.month, now.day);
   static get getNowSimpleFormat => DateFormat('yyyy-MM-dd').format(now);
+
+  static String timeFormat(int seconds) {
+    var duration = Duration(seconds: seconds);
+    List<String> timeArr = duration.toString().split(".").first.split(":");
+    return '${timeArr[1]}:${timeArr[2]}';
+  }
 }

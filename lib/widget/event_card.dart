@@ -116,7 +116,7 @@ class _EventCardState extends State<EventCard> {
                       child: OutlinedButton(
                         onPressed: () {
                           if (workoutList.isNotEmpty) {
-                            workoutSetProvider.deleteOne(
+                            workoutSetProvider.delete(
                                 workoutSetModel: workoutList.last);
                           }
                         },
@@ -133,10 +133,10 @@ class _EventCardState extends State<EventCard> {
                         onPressed: () {
                           if (workoutList.isNotEmpty) {
                             workoutList.last.workoutSetId = null;
-                            workoutSetProvider.insertOne(
+                            workoutSetProvider.insert(
                                 workoutSetModel: workoutList.last);
                           } else {
-                            workoutSetProvider.insertOne(
+                            workoutSetProvider.insert(
                               workoutSetModel: WorkoutSetModel(
                                 eventId: widget.eventModel.eventId,
                                 count: 0,

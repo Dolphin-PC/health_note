@@ -30,7 +30,7 @@ class _WorkoutSetCardState extends State<WorkoutSetCard> {
                 value: widget.workoutSetModel.isComplete,
                 onChanged: (bool) {
                   widget.workoutSetModel.isComplete = bool!;
-                  workoutSetProvider.updateOne(workoutSetModel: widget.workoutSetModel, changeModel: widget.workoutSetModel);
+                  workoutSetProvider.update(workoutSetModel: widget.workoutSetModel, changeModel: widget.workoutSetModel);
                   // setState(() => isChecked = bool!);
                 },
               ),

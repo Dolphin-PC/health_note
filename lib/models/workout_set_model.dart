@@ -34,9 +34,13 @@ class WorkoutSetModel {
     };
   }
 
-  static Future<List<WorkoutSetModel>> selectList({required List whereArgs, bool isDelete = true}) async {
+  static Future<List<WorkoutSetModel>> selectList(
+      {required List whereArgs, bool isDelete = true}) async {
     final db = await DBHelper().database;
-    final List<Map<String, dynamic>> maps = await db.query(TableNames.workoutSet, where: 'event_id = ?', whereArgs: whereArgs);
+    final List<Map<String, dynamic>> maps = await db.query(
+        TableNames.workoutSet,
+        where: 'event_id = ?',
+        whereArgs: whereArgs);
 
     var list = List.generate(maps.length, (i) {
       return WorkoutSetModel(
@@ -56,7 +60,8 @@ class WorkoutSetModel {
     return list;
   }
 
-  static Future<List<dynamic>> selectListForRunExercise({required String day}) async {
+  static Future<List<dynamic>> selectListForRunExercise(
+      {required String day}) async {
     final db = await DBHelper().database;
     String sqlStr = '''
       select /* workout_set_model.selectListForRunExercise */
@@ -101,6 +106,14 @@ class WorkoutSetModel {
 
   Future<void> update(Map<String, dynamic> prmMap) async {
     final db = await DBHelper().database;
-    await db.update(TableNames.workoutSet, prmMap, where: 'workout_set_id = ?', whereArgs: [workoutSetId]);
+    await db.update(TableNames.workoutSet, prmMap,
+        where: 'workout_set_id = ?', whereArgs: [workoutSetId]);
+  }
+
+  static Future<void> updateOther(
+      {required Map<String, dynamic> prmMap, required int workoutSetId}) async {
+    final db = await DBHelper().database;
+    await db.update(TableNames.workoutSet, prmMap,
+        where: 'workout_set_id = ?', whereArgs: [workoutSetId]);
   }
 }

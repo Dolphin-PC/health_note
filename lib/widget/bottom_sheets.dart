@@ -19,7 +19,7 @@ class BottomSheets {
 
       unitCountController.text = changeVal.toString();
       selectedWorkoutSetModel.unitCount = changeVal;
-      workoutSetProvider.updateOne(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
+      workoutSetProvider.update(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
     }
 
     void onButtonCountAction({required int value}) {
@@ -28,7 +28,7 @@ class BottomSheets {
 
       countController.text = changeVal.toString();
       selectedWorkoutSetModel.count = changeVal;
-      workoutSetProvider.updateOne(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
+      workoutSetProvider.update(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
     }
 
     return showBottomSheet(
@@ -78,7 +78,7 @@ class BottomSheets {
                                 int intVal = int.parse(value);
 
                                 selectedWorkoutSetModel.unitCount = intVal;
-                                workoutSetProvider.updateOne(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
+                                workoutSetProvider.update(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
                               },
                             ),
                           ),
@@ -122,7 +122,7 @@ class BottomSheets {
                                   int intVal = int.parse(value);
 
                                   selectedWorkoutSetModel.count = intVal;
-                                  workoutSetProvider.updateOne(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
+                                  workoutSetProvider.update(workoutSetModel: selectedWorkoutSetModel, changeModel: selectedWorkoutSetModel);
                                 },
                               ),
                             ),
