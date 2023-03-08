@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health_note/common/util.dart';
-import 'package:health_note/main.dart';
 import 'package:health_note/providers/run_exercise_provider.dart';
 import 'package:health_note/styles/text_styles.dart';
 import 'package:intl/intl.dart';
@@ -18,55 +17,70 @@ class RunExerciseScreen extends StatefulWidget {
 }
 
 class _RunExerciseScreenState extends State<RunExerciseScreen> {
-  static const initMinute = 0; // 초기 시간
-  int totalSeconds = initMinute; // 전체 시간
-  int setSeconds = initMinute; // 세트당
+  late RunExerciseProvider runExerciseProvider;
+  late EventProvider eventProvider;
 
+  // 타이머 시간초
+  static const initMinute = 0;
+  int totalSeconds = initMinute;
+  int setSeconds = initMinute;
+
+  // 타이머 컨트롤에 필요한 변수
   late Timer totalTime, setTime;
   bool isRunning = false, isStarted = false, isLastWorkoutSet = false;
 
+  // 하단 버튼 컨트롤에 필요한 변수
   int indexCount = 1, maxCount = 0;
+  // circular 컨트롤에 필요한 변수
+  int currentEventIndex = 0, currentWorkoutIndex = 0;
+  String currentEventId = "";
+  double eventPercent = 0, workoutPercent = 0;
 
-  List<Map<String, List<dynamic>>> eventsMapList = [];
+  // List<Map<String, List<dynamic>>> eventsMapList = [];
+  List<String> eventIdList = [];
   Map<String, List<dynamic>> eventPerWorkoutMap = {};
 
-  late RunExerciseProvider runExerciseProvider;
-  late EventProvider eventProvider;
+  // 현재 운동정보
+  bool isInit = false;
   late var runInfo;
-  double exercisePercent = 0, workoutPercent = 0;
 
   @override
   void initState() {
     super.initState();
     Util.execAfterBinding(() async {
-      String dayFormat =
-          DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay);
+      String dayFormat = DateFormat("yyyy-MM-dd").format(eventProvider.selectedDay);
       await runExerciseProvider.init(day: dayFormat);
       maxCount = runExerciseProvider.runList.length;
       // logger.d(runExerciseProvider.runList);
 
       for (var map in runExerciseProvider.runList) {
         String eventId = map['event_id'].toString();
-        if (!eventPerWorkoutMap.containsKey(eventId))
+        if (!eventPerWorkoutMap.containsKey(eventId)) {
           eventPerWorkoutMap[eventId] = [];
+          eventIdList.add(eventId);
+        }
         eventPerWorkoutMap[eventId]!.add(map);
       }
 
-      eventPerWorkoutMap
-          .forEach((key, value) => eventsMapList.add({key: value}));
+      setState(() {
+        currentEventId = eventIdList.first;
+        calculatePercent();
 
-      setState(() {});
+        runInfo = eventPerWorkoutMap[currentEventId]!.first;
+        isInit = true;
+      });
     });
+  }
+
+  void calculatePercent() {
+    eventPercent = (currentEventIndex + 1) / eventIdList.length;
+    workoutPercent = (currentWorkoutIndex + 1) / eventPerWorkoutMap[currentEventId]!.length;
   }
 
   @override
   Widget build(BuildContext context) {
     runExerciseProvider = Provider.of(context, listen: true);
     eventProvider = Provider.of(context, listen: false);
-
-    if (runExerciseProvider.isInit) {
-      runInfo = runExerciseProvider.runList[indexCount - 1];
-    }
 
     double fitWidth = MediaQuery.of(context).size.width;
 
@@ -76,7 +90,7 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
         title: Text('운동 시작', style: TextStyles.headText),
       ),
       body: Center(
-        child: runExerciseProvider.isInit
+        child: isInit
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -103,10 +117,9 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                               height: fitWidth * 0.8,
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.grey[300],
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.green),
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                                 strokeWidth: 15,
-                                value: exercisePercent / 100,
+                                value: eventPercent,
                               ),
                             ),
                           ),
@@ -116,10 +129,9 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                               height: fitWidth * 0.6,
                               child: CircularProgressIndicator(
                                 backgroundColor: Colors.grey[300],
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.blue),
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                                 strokeWidth: 15,
-                                value: workoutPercent / 100,
+                                value: workoutPercent,
                               ),
                             ),
                           ),
@@ -159,12 +171,9 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                           child: FittedBox(
                             child: IconButton(
                               icon: Icon(
-                                isRunning
-                                    ? Icons.pause_circle_outline
-                                    : Icons.play_circle_outline,
+                                isRunning ? Icons.pause_circle_outline : Icons.play_circle_outline,
                               ),
-                              onPressed:
-                                  isRunning ? onPausePressed : onStartPressed,
+                              onPressed: isRunning ? onPausePressed : onStartPressed,
                             ),
                           ),
                         ),
@@ -174,8 +183,7 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
                           child: FittedBox(
                             child: IconButton(
                               icon: Icon(Icons.next_plan),
-                              onPressed:
-                                  isLastWorkoutSet ? null : onNextSetPressed,
+                              onPressed: isLastWorkoutSet ? null : onNextSetPressed,
                             ),
                           ),
                         ),
@@ -220,8 +228,7 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
   }
 
   void onNextSetPressed() {
-    logger.d(indexCount);
-    logger.d(maxCount);
+    // 타이머 및 버튼 컨트롤
     setState(() {
       setSeconds = initMinute;
       indexCount++;
@@ -231,5 +238,8 @@ class _RunExerciseScreenState extends State<RunExerciseScreen> {
         isLastWorkoutSet = true;
       });
     }
+
+    // 퍼센트 컨트롤
+    // eventPerWorkoutMap[currentEventIndex].inde
   }
 }
